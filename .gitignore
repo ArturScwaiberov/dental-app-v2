@@ -1,0 +1,20 @@
+node_modules/**/*
+.expo/*
+.expo-shared/*
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+web-report/
+
+# macOS
+.DS_Store
+report.20200519.205847.8264.0.001.json
+report.20200528.132015.7752.0.001.json
+report.20200528.132016.9104.0.001.json
+
+aws-exports.js
