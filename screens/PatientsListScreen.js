@@ -6,8 +6,7 @@ import { Header, Item, Input, Icon } from 'native-base'
 
 import { patientsApi } from '../utils'
 import { Patient } from '../src/components'
-import { useDispatch, useSelector } from 'react-redux'
-import * as patientsAction from '../store/actions/patients'
+import { useSelector } from 'react-redux'
 
 const PatientsListScreen = ({ navigation }) => {
   const [data, setData] = React.useState([])
@@ -17,8 +16,12 @@ const PatientsListScreen = ({ navigation }) => {
   const ref = React.useRef(null)
   const token = useSelector((state) => state.auth.token)
   /* console.log('data', data) */
-  const dispatch = useDispatch()
-  const patients = useSelector((state) => state.patients)
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchPatients()
+    }, [])
+  )
 
   useScrollToTop(ref)
 
@@ -32,21 +35,15 @@ const PatientsListScreen = ({ navigation }) => {
       .catch((error) => {
         console.log('Error', error)
       })
+      .finally(() => {
+        setRefreshing(false)
+      })
   }
 
-  const fetchPatients = React.useCallback(async () => {
-    try {
-      await dispatch(patientsAction.getPatients(token))
-    } catch (err) {
-      console.log('err', err)
-    }
-  }, [])
-
-  React.useEffect(() => {
+  const fetchPatients = () => {
     setRefreshing(true)
-    fetchPatients()
-    setRefreshing(false)
-  }, [])
+    cleanFetch()
+  }
 
   const onSearch = (e) => {
     setSearchValue(e.nativeEvent.text)
@@ -70,14 +67,6 @@ const PatientsListScreen = ({ navigation }) => {
     )
   }
 
-  if (refreshing) {
-    return (
-      <ActionText style={{ color: '#816CFF', padding: 0 }}>
-        Ни одного пациента не найдено... 💁‍♀️
-      </ActionText>
-    )
-  }
-
   return (
     <Container>
       <Animated.FlatList
@@ -91,9 +80,9 @@ const PatientsListScreen = ({ navigation }) => {
           { useNativeDriver: true } // <-- Add this
         )}
         data={
-          patients
-            ? patients.filter(
-                (item) => item.fullName.toLowerCase().indexOf(searchValue.toLowerCase()) >= 0
+          data
+            ? data.filter(
+                (item) => item.person.fullName.toLowerCase().indexOf(searchValue.toLowerCase()) >= 0
               )
             : null
         }
