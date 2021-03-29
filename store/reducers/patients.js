@@ -10,6 +10,7 @@ export default (state = initialState, action) => {
       return {
         patients: action.patients,
       }
+    default:
+      return state
   }
-  return state
 }

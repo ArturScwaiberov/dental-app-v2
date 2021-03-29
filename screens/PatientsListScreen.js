@@ -16,6 +16,7 @@ const PatientsListScreen = ({ navigation }) => {
   const ref = React.useRef(null)
   const token = useSelector((state) => state.auth.token)
   /* console.log('data', data) */
+  const patients = useSelector((state) => state.patients)
 
   useFocusEffect(
     React.useCallback(() => {

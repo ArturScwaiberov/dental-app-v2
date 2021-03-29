@@ -12,12 +12,11 @@ import {
   EditPatientScreen,
   EditAppointmentScreen,
   ToothFormulaScreen,
+  AppointmentDateScreen,
+  ConfirmAppointmentScreen,
+  LogoutScreen,
 } from '../screens'
 import { Button, Icon } from 'native-base'
-
-import AppointmentDateScreen from '../screens/AppointmentDateScreen'
-import ConfirmAppointmentScreen from '../screens/ConfirmAppointmentScreen'
-import LogoutScreen from '../screens/LogoutScreen'
 
 const Tab = createBottomTabNavigator()
 const Stack = createStackNavigator()

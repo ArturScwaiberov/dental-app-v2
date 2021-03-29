@@ -10,6 +10,7 @@ export const loginCurrent = () => {
       dispatch({
         type: SIGNIN,
         token: user.signInUserSession.idToken.jwtToken,
+        customerId: user.signInUserSession.idToken.payload.sub,
       })
     } catch (err) {
       console.log('ERROR auto sign in:', err)
@@ -25,6 +26,7 @@ export const login = (email, password) => {
       dispatch({
         type: SIGNIN,
         token: user.signInUserSession.idToken.jwtToken,
+        customerId: user.signInUserSession.idToken.payload.sub,
       })
     } catch (err) {
       if (err.code === 'NotAuthorizedException') {

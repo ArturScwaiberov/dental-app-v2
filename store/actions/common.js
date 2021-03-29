@@ -1,3 +1,4 @@
+import Clinic from '../../models/clinic'
 import Section from '../../models/section'
 import User from '../../models/user'
 
@@ -42,7 +43,20 @@ export const getCommon = (token) => {
         )
       }
 
-      dispatch({ type: GET_COMMON, sections: loadedSections, users: loadedUsers })
+      const loadedClinic = new Clinic(
+        respData.clinic.id,
+        respData.clinic.name,
+        respData.clinic.phone,
+        respData.clinic.email,
+        respData.clinic.operatingHours
+      )
+
+      dispatch({
+        type: GET_COMMON,
+        sections: loadedSections,
+        clinic: loadedClinic,
+        users: loadedUsers,
+      })
     } catch (err) {
       console.log('ERROR after getting common: ', err)
     }

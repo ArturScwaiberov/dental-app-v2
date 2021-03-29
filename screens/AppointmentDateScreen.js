@@ -7,13 +7,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import { patientsApi } from '../utils'
 import Calendar from '../src/components/Calendar'
 import * as commonActions from '../store/actions/common'
+import * as patientsActions from '../store/actions/patients'
 
 const AppointmentDateScreen = ({ navigation, route }) => {
   const [refreshing, setRefreshing] = React.useState(false)
   const [data, setData] = React.useState([])
   const token = useSelector((state) => state.auth.token)
-  /* const sections = useSelector((state) => state.common.sections) */
+  const sections = useSelector((state) => state.common.sections)
   const users = useSelector((state) => state.common.users)
+  const clinic = useSelector((state) => state.common.clinic)
   /* const date = new Date('April 17, 2021 03:24:00') */
   const date = new Date()
   const startMonth = format(startOfMonth(date), 'yyyy-MM-dd')
@@ -21,8 +23,9 @@ const AppointmentDateScreen = ({ navigation, route }) => {
   const dispatch = useDispatch()
   /* console.log('sections', sections) */
   /* console.log('users', users) */
+  /* console.log('clinic', clinic) */
 
-  const cleanFetch = async () => {
+  const fetchCalendar = async () => {
     await patientsApi
       .getCalendar(token, startMonth, endMonth)
       .then(({ data }) => {
@@ -37,20 +40,30 @@ const AppointmentDateScreen = ({ navigation, route }) => {
     try {
       await dispatch(commonActions.getCommon(token))
     } catch (err) {
-      console.log('err', err)
+      console.log('ERROR fetching commons', err.message)
     }
   }
-  const fetchCalendar = () => {
+
+  const fetchPatients = async () => {
+    try {
+      await dispatch(patientsActions.getPatients(token))
+    } catch (err) {
+      console.log('ERROR fetching patients', err.message)
+    }
+  }
+
+  const fetchAll = () => {
     setRefreshing(true)
-    cleanFetch()
+    fetchCalendar()
     fetchCommons()
+    fetchPatients()
     setRefreshing(false)
   }
 
   React.useEffect(() => {
     let cleanup = false
     if (!cleanup) {
-      fetchCalendar()
+      fetchAll()
     }
     return () => {
       cleanup

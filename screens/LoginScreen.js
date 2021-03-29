@@ -15,6 +15,7 @@ import {
 import styled from 'styled-components/native'
 import { Alert, StyleSheet } from 'react-native'
 import { useDispatch } from 'react-redux'
+
 import * as authAction from '../store/actions/auth'
 
 const LoginScreen = ({ navigation }) => {
@@ -34,14 +35,6 @@ const LoginScreen = ({ navigation }) => {
     const text = e.nativeEvent.text
     setFieldValue(name, text)
   }
-
-  /* const submitHandler = () => {
-    navigation.navigate('ConfirmNumberScreen')
-  } */
-
-  /* const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [errorMessage, setErrorMessage] = useState('') */
 
   const submitHandler = async () => {
     setLoading(true)

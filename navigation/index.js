@@ -15,11 +15,13 @@ const AuthLoadingScreen = (props) => {
   /* console.log('token____', token) */
 
   React.useEffect(() => {
+    setLoading(true)
     if (token) {
       setUserToken(token)
     } else {
       loadApp()
     }
+    setLoading(false)
   }, [token])
 
   //можно это вырубить после того как будет подключен AsyncStorage
@@ -35,13 +37,11 @@ const AuthLoadingScreen = (props) => {
   } */
 
   const loadApp = () => {
-    setLoading(true)
     try {
       dispatch(authAction.loginCurrent())
     } catch (err) {
       console.log(err)
     }
-    setLoading(false)
   }
 
   const signOut = async () => {
@@ -54,14 +54,9 @@ const AuthLoadingScreen = (props) => {
     setUserToken(null)
   }
 
-  /* const signIn = async () => {
-    setUserToken(token)
-  } */
-
-  const showLoadingSpinner = !userToken && loading
   let view = ''
 
-  if (showLoadingSpinner) {
+  if (loading) {
     view = (
       <View style={styles.container}>
         <ActivityIndicator size='large' color='#aaa' />
