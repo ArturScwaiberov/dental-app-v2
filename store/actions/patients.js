@@ -1,3 +1,4 @@
+import axios from '../../core/axios'
 import Patient from '../../models/patient'
 
 export const GET_PATIENTS = 'GET_PATIENTS'
@@ -5,15 +6,9 @@ export const GET_PATIENTS = 'GET_PATIENTS'
 export const getPatients = (token) => {
   return async (dispatch) => {
     try {
-      const response = await fetch(
-        'https://cpfxbicmq4.execute-api.us-east-1.amazonaws.com/prod/v1/patients',
-        {
-          method: 'GET',
-          headers: {
-            authorization: token,
-          },
-        }
-      )
+      const response = await axios.get(`/patients`, {
+        headers: { authorization: token },
+      })
 
       const respData = await response.json()
       const respDataArray = respData[0]
@@ -29,7 +24,8 @@ export const getPatients = (token) => {
             respDataArray[key].person.sex,
             respDataArray[key].statsInvoices.totalInvoiced,
             respDataArray[key].statsInvoices.totalDebts,
-            respDataArray[key].appointments
+            respDataArray[key].appointments,
+            respDataArray[key].person.photoLink
           )
         )
       }

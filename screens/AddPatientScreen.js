@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
-import { Container, Content, Form, Item, Input, Label, Icon, Text, Button } from 'native-base'
-import styled from 'styled-components/native'
+import React from 'react'
+import { Container, Content, Form, Item, Input, Label, Icon, Text, Button, View } from 'native-base'
 import { useSelector } from 'react-redux'
 import { TextInputMask } from 'react-native-masked-input'
 
@@ -8,9 +7,9 @@ import { patientsApi } from '../utils'
 
 const AddPatientScreen = ({ navigation }) => {
   const token = useSelector((state) => state.auth.token)
-  const [values, setValues] = useState({})
-  const [error, setError] = useState('')
-  console.log('values', values)
+  const [values, setValues] = React.useState({})
+  const [error, setError] = React.useState('')
+  const [responce, setResponce] = React.useState([])
 
   const setFieldValue = (name, value) => {
     setValues({
@@ -25,15 +24,14 @@ const AddPatientScreen = ({ navigation }) => {
   }
 
   const submitHandler = () => {
-    patientsApi
-      .add(token, values)
-      .then(() => {
+    patientsApi.add(token, values).then(({ data }) => {
+      setResponce(data)
+      if (responce.error === 'BAD_REQUEST') {
+        setError('please enter valid data')
+      } else {
         navigation.navigate('PatientsList')
-      })
-      .catch((e) => {
-        console.log(e)
-        setError(e.message)
-      })
+      }
+    })
   }
 
   return (
@@ -84,7 +82,7 @@ const AddPatientScreen = ({ navigation }) => {
             />
           </Item>
 
-          <ButtonView>
+          <View style={{ marginTop: 30 }}>
             <Button
               onPress={submitHandler}
               rounded
@@ -100,10 +98,10 @@ const AddPatientScreen = ({ navigation }) => {
               <Text style={{ color: '#fff' }}>Добавить пациента</Text>
               <Icon type='Entypo' name='plus' style={{ color: '#fff' }} />
             </Button>
-          </ButtonView>
+          </View>
           {!!error && (
             <Label style={{ marginTop: 20, fontSize: 16, alignSelf: 'center' }}>
-              There is an error ocured: <TomatoText>{error}</TomatoText>
+              There is an error ocured: <Text style={{ color: 'tomato' }}>{error}</Text>
             </Label>
           )}
         </Form>
@@ -111,13 +109,5 @@ const AddPatientScreen = ({ navigation }) => {
     </Container>
   )
 }
-
-const ButtonView = styled.View({
-  marginTop: 30,
-})
-
-const TomatoText = styled.Text({
-  color: 'tomato',
-})
 
 export default AddPatientScreen

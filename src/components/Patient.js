@@ -2,8 +2,8 @@ import React from 'react'
 import styled from 'styled-components/native'
 import { differenceInYears } from 'date-fns'
 
-import GrayText from './GrayText'
 import Ava from './Ava'
+import GrayText from './GrayText'
 
 const Patient = ({ navigation, item }) => {
   let age
@@ -20,6 +20,7 @@ const Patient = ({ navigation, item }) => {
       onPress={() =>
         navigation.navigate('Patient', {
           item: item,
+          patientId: item.id,
         })
       }
     >

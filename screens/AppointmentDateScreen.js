@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { patientsApi } from '../utils'
 import Calendar from '../src/components/Calendar'
+import NewCalendar from '../src/components/NewCalendar'
 import * as commonActions from '../store/actions/common'
 import * as patientsActions from '../store/actions/patients'
 
@@ -36,6 +37,8 @@ const AppointmentDateScreen = ({ navigation, route }) => {
       })
   }
 
+  /* console.log('data__________', data) */
+
   const fetchCommons = async () => {
     try {
       await dispatch(commonActions.getCommon(token))
@@ -52,11 +55,11 @@ const AppointmentDateScreen = ({ navigation, route }) => {
     }
   }
 
-  const fetchAll = () => {
+  const fetchAll = async () => {
     setRefreshing(true)
-    fetchCalendar()
-    fetchCommons()
-    fetchPatients()
+    await fetchCalendar()
+    await fetchCommons()
+    await fetchPatients()
     setRefreshing(false)
   }
 
@@ -76,7 +79,12 @@ const AppointmentDateScreen = ({ navigation, route }) => {
         {refreshing ? (
           <Spinner color='blue' size='large' color='#2A86FF' />
         ) : (
-          <Calendar date={date} data={data} navigation={navigation} />
+          <Calendar
+            date={date}
+            data={data}
+            navigation={navigation}
+            operatingHours={clinic.operatingHours}
+          />
         )}
       </Content>
     </Container>
@@ -86,3 +94,6 @@ const AppointmentDateScreen = ({ navigation, route }) => {
 const safe = { flex: 1, paddingTop: 10, paddingLeft: 20, paddingRight: 20 }
 
 export default AppointmentDateScreen
+{
+  /* <NewCalendar /> */
+}

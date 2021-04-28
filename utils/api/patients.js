@@ -2,20 +2,20 @@ import axios from '../../core/axios'
 
 export default {
   get: (token) =>
-    axios.get('https://cpfxbicmq4.execute-api.us-east-1.amazonaws.com/prod/v1/patients', {
+    axios.get('/patients', {
+      headers: { authorization: token },
+    }),
+  getPatient: (token, id) =>
+    axios.get(`/patients/${id}`, {
       headers: { authorization: token },
     }),
   add: (token, data) =>
-    axios.post('https://cpfxbicmq4.execute-api.us-east-1.amazonaws.com/prod/v1/patients', data, {
+    axios.post('/patients', data, {
       headers: { authorization: token },
     }),
   getCalendar: (token, start, end) =>
-    axios.get(
-      `https://cpfxbicmq4.execute-api.us-east-1.amazonaws.com/prod/v1/appointments/${start}/${end}`,
-      {
-        headers: { authorization: token },
-      }
-    ),
-  remove: (id) => axios.delete('patients/remove/' + id),
-  update: (id, values) => axios.patch('patients/update/' + id, values),
+    axios.get(`/appointments/${start}/${end}`, {
+      headers: { authorization: token },
+    }),
+  update: (id, values) => axios.patch('/patients/update/' + id, values),
 }

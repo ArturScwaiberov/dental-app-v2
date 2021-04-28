@@ -97,7 +97,7 @@ const LoginScreen = ({ navigation }) => {
                 disabled={values.email && values.password ? false : true}
               >
                 <Text style={styles.buttonText}>Далее</Text>
-                <Icon type='MaterialIcons' name='navigate-next' style={{ color: '#fff' }} />
+                <Icon type='MaterialIcons' name='login' style={{ color: '#fff' }} />
               </Button>
               <Text style={errorMessage.length > 0 ? styles.label : null}>{errorMessage}</Text>
             </ButtonView>

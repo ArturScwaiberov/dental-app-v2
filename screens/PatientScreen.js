@@ -1,26 +1,56 @@
 import React, { useEffect, useState } from 'react'
-import { Animated, Platform, ActivityIndicator, RefreshControl, Linking, Alert } from 'react-native'
+import { Animated, Platform, RefreshControl, Linking, ActivityIndicator } from 'react-native'
 import { Foundation, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons'
 import styled from 'styled-components'
 import { useSelector } from 'react-redux'
 
 import { GrayText, Button, Badge } from '../src/components'
-import { appointmentsApi } from '../utils'
+import { appointmentsApi, patientsApi } from '../utils'
 
 const PatientScreen = ({ route, navigation }) => {
-  const { item } = route.params
+  const { item, patientId } = route.params
   const [appointments, setAppointments] = useState([])
+  const [currentPatient, setCurrentPatient] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [animatedValue, setAnimatedValue] = useState(new Animated.Value(0))
   const AnimatedGrayText = Animated.createAnimatedComponent(GrayText)
   const token = useSelector((state) => state.auth.token)
 
-  const fetchPatientsAppointments = () => {
-    appointmentsApi
-      .get(token, item.id)
+  const fetchPatientsAppointments = async () => {
+    await appointmentsApi
+      .get(token, patientId)
       .then(({ data }) => {
         setAppointments(data)
       })
+      .catch((error) => {
+        console.log('Error', error.message)
+      })
+  }
+
+  const fetchAll = async () => {
+    /* try {
+      const { appData } = await appointmentsApi.get(token, patientId)
+      setAppointments(appData)
+      const { patData } = await patientsApi.getPatient(token, patientId)
+      setCurrentPatient(patData)
+    } catch (error) {
+      console.log('Error', error.message)
+    } finally {
+      setIsLoading(false)
+    } */
+
+    await appointmentsApi
+      .get(token, patientId)
+      .then(({ data }) => {
+        setAppointments(data)
+      })
+      .catch((error) => {
+        console.log('Error', error.message)
+      })
+
+    await patientsApi
+      .getPatient(token, patientId)
+      .then(({ data }) => setCurrentPatient(data))
       .catch((error) => {
         console.log('Error', error.message)
       })
@@ -32,18 +62,10 @@ const PatientScreen = ({ route, navigation }) => {
   useEffect(() => {
     let mounted = true
     if (mounted) {
-      fetchPatientsAppointments()
+      fetchAll()
     }
     return () => (mounted = false)
   }, [])
-
-  const BirthDate = () => {
-    if (item.person.birthday) {
-      return <GrayText style={{ marginBottom: 10 }}>Birth date: {item.person.birthday}</GrayText>
-    } else {
-      return null
-    }
-  }
 
   const HEADER_HEIGHT = Platform.OS === 'android' ? 260 : 250
 
@@ -54,143 +76,145 @@ const PatientScreen = ({ route, navigation }) => {
   })
 
   const pressHandler = () => {
-    navigation.navigate('ToothFormula', { userId: item.id, appointments: appointments })
+    if (currentPatient) {
+      navigation.navigate('ToothFormula', {
+        userId: currentPatient.id,
+        appointments: currentPatient.appointments,
+      })
+    }
+  }
+
+  if (isLoading) {
+    return <ActivityIndicator style={{ paddingTop: 20 }} size='large' color='#2A86FF' />
   }
 
   return (
     <Container>
-      {isLoading ? (
-        <ActivityIndicator size='small' />
-      ) : (
-        <Animated.FlatList
-          data={appointments}
-          scrollEventThrottle={16} // <-- Use 1 here to make sure no events are ever missed
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: animatedValue } } }],
-            { useNativeDriver: true } // <-- Add this
-          )}
-          style={{
-            paddingHorizontal: 20,
-          }}
-          contentContainerStyle={{ flexGrow: 1 }}
-          renderItem={({ item }) => (
-            <AppointmentCard
-              key={item.id}
+      <Animated.FlatList
+        data={appointments ? appointments : null}
+        scrollEventThrottle={16} // <-- Use 1 here to make sure no events are ever missed
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: animatedValue } } }],
+          { useNativeDriver: true } // <-- Add this
+        )}
+        style={{
+          paddingHorizontal: 20,
+        }}
+        contentContainerStyle={{ flexGrow: 1 }}
+        renderItem={({ item }) => (
+          <AppointmentCard
+            key={item.id}
+            style={{
+              shadowColor: 'gray',
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: 0.1,
+              shadowRadius: 2,
+              elevation: 1,
+            }}
+          >
+            <AppointmentCardRow>
+              <MaterialCommunityIcons
+                style={{ marginRight: 7 }}
+                name='calendar-outline'
+                size={20}
+                color='#A3A3A3'
+              />
+              <AppointmentCardLabel>
+                Date: <Bold>{item.date}</Bold>
+              </AppointmentCardLabel>
+            </AppointmentCardRow>
+
+            <AppointmentCardRow>
+              <MaterialCommunityIcons
+                style={{ marginRight: 7 }}
+                name='calendar-clock'
+                size={20}
+                color='#A3A3A3'
+              />
+              <AppointmentCardLabel>
+                Duration:{' '}
+                <Bold>
+                  {item.startTime.slice(0, 5)} - {item.endTime.slice(0, 5)}
+                </Bold>
+              </AppointmentCardLabel>
+            </AppointmentCardRow>
+
+            {item.note && (
+              <AppointmentCardRow>
+                <Ionicons style={{ marginRight: 7 }} name='md-document' size={20} color='#A3A3A3' />
+                <AppointmentCardLabel>
+                  Note: <Bold>{item.note}</Bold>
+                </AppointmentCardLabel>
+              </AppointmentCardRow>
+            )}
+
+            {item.status && (
+              <AppointmentCardRow>
+                <ButtonsWrapper style={{ flex: 1 }}>
+                  <Badge color='green' style={{ fontWeight: 'bold' }}>
+                    {item.status}
+                  </Badge>
+                </ButtonsWrapper>
+              </AppointmentCardRow>
+            )}
+          </AppointmentCard>
+        )}
+        refreshControl={
+          <RefreshControl refreshing={isLoading} onRefresh={fetchPatientsAppointments} />
+        }
+        ListHeaderComponent={() => (
+          <Animated.View
+            style={[
+              {
+                height: HEADER_HEIGHT,
+              },
+              {
+                transform: [{ translateY }],
+              },
+            ]}
+          >
+            <PatientFullName>{currentPatient?.person?.fullName}</PatientFullName>
+            <GrayText style={{ marginBottom: 10 }}>
+              Total invoiced: {currentPatient?.statsInvoices?.totalInvoiced}
+            </GrayText>
+            <GrayText style={{ marginBottom: 10 }}>
+              Total debts: {currentPatient?.statsInvoices?.totalDebts}
+            </GrayText>
+            <GrayText style={{ marginBottom: 10 }}>Phone: {currentPatient?.person?.phone}</GrayText>
+            <GrayText style={{ marginBottom: 10 }}>
+              Birth date: {currentPatient?.person?.birthday}
+            </GrayText>
+            <ButtonsWrapper>
+              <Button onPress={pressHandler}>Dent formula</Button>
+              <CallButton onPress={() => Linking.openURL('tel:' + currentPatient?.person?.phone)}>
+                <Foundation
+                  style={{ marginTop: Platform.OS === 'ios' ? 2 : 0 }}
+                  name='telephone'
+                  size={30}
+                  color='white'
+                />
+              </CallButton>
+            </ButtonsWrapper>
+
+            <AnimatedGrayText
               style={{
-                shadowColor: 'gray',
-                shadowOffset: { width: 0, height: 0 },
-                shadowOpacity: 0.1,
-                shadowRadius: 2,
-                elevation: 1,
+                color: '#000',
+                fontSize: 20,
+                fontWeight: 'bold',
+                backgroundColor: '#f8fafd',
+                paddingTop: 6,
+                alignSelf: 'center',
               }}
             >
-              <AppointmentCardRow>
-                <MaterialCommunityIcons
-                  style={{ marginRight: 7 }}
-                  name='calendar-outline'
-                  size={20}
-                  color='#A3A3A3'
-                />
-                <AppointmentCardLabel>
-                  Date: <Bold>{item.date}</Bold>
-                </AppointmentCardLabel>
-              </AppointmentCardRow>
-
-              <AppointmentCardRow>
-                <MaterialCommunityIcons
-                  style={{ marginRight: 7 }}
-                  name='calendar-clock'
-                  size={20}
-                  color='#A3A3A3'
-                />
-                <AppointmentCardLabel>
-                  Duration:{' '}
-                  <Bold>
-                    {item.startTime.slice(0, 5)} - {item.endTime.slice(0, 5)}
-                  </Bold>
-                </AppointmentCardLabel>
-              </AppointmentCardRow>
-
-              {item.note && (
-                <AppointmentCardRow>
-                  <Ionicons
-                    style={{ marginRight: 7 }}
-                    name='md-document'
-                    size={20}
-                    color='#A3A3A3'
-                  />
-                  <AppointmentCardLabel>
-                    Note: <Bold>{item.note}</Bold>
-                  </AppointmentCardLabel>
-                </AppointmentCardRow>
-              )}
-
-              {item.status && (
-                <AppointmentCardRow>
-                  <ButtonsWrapper style={{ flex: 1 }}>
-                    <Badge color='green' style={{ fontWeight: 'bold' }}>
-                      {item.status}
-                    </Badge>
-                  </ButtonsWrapper>
-                </AppointmentCardRow>
-              )}
-            </AppointmentCard>
-          )}
-          refreshControl={
-            <RefreshControl refreshing={isLoading} onRefresh={fetchPatientsAppointments} />
-          }
-          ListHeaderComponent={() => (
-            <Animated.View
-              style={[
-                {
-                  height: HEADER_HEIGHT,
-                },
-                {
-                  transform: [{ translateY }],
-                },
-              ]}
-            >
-              <PatientFullName>{item.person.fullName}</PatientFullName>
-              <GrayText style={{ marginBottom: 10 }}>
-                Total invoiced: {item.statsInvoices.totalInvoiced}
-              </GrayText>
-              <GrayText style={{ marginBottom: 10 }}>
-                Total debts: {item.statsInvoices.totalDebts}
-              </GrayText>
-              <GrayText style={{ marginBottom: 10 }}>Phone: {item.person.phone}</GrayText>
-              <BirthDate />
-              <ButtonsWrapper>
-                <Button onPress={pressHandler}>Dent formula</Button>
-                <CallButton onPress={() => Linking.openURL('tel:' + item.person.phone)}>
-                  <Foundation
-                    style={{ marginTop: Platform.OS === 'ios' ? 2 : 0 }}
-                    name='telephone'
-                    size={30}
-                    color='white'
-                  />
-                </CallButton>
-              </ButtonsWrapper>
-
-              <AnimatedGrayText
-                style={{
-                  color: '#000',
-                  fontSize: 20,
-                  fontWeight: 'bold',
-                  backgroundColor: '#f8fafd',
-                  paddingTop: 6,
-                  alignSelf: 'center',
-                }}
-              >
-                {isLoading === false
-                  ? appointments.length > 0
-                    ? `Приемы (${appointments.length})`
-                    : `У пациента ${item.person.fullName} ещё нет приемов`
-                  : null}
-              </AnimatedGrayText>
-            </Animated.View>
-          )}
-        />
-      )}
+              {isLoading === false
+                ? appointments.length > 0
+                  ? `Приемы (${appointments.length})`
+                  : `У пациента ${currentPatient?.person?.fullName} ещё нет приемов`
+                : null}
+            </AnimatedGrayText>
+          </Animated.View>
+        )}
+      />
     </Container>
   )
 }

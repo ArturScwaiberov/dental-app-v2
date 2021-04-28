@@ -1,11 +1,8 @@
-import axios from 'axios'
+import axios from '../../core/axios'
 
 export default {
   get: (token, id) =>
-    axios.get(
-      `https://cpfxbicmq4.execute-api.us-east-1.amazonaws.com/prod/v1/patients/${id}/procedures`,
-      {
-        headers: { authorization: token },
-      }
-    ),
+    axios.get(`/patients/${id}/procedures`, {
+      headers: { authorization: token },
+    }),
 }

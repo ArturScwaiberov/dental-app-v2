@@ -1,28 +1,43 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components/native'
-import { add, sub, addDays, endOfMonth, format, getDate, startOfMonth, startOfWeek } from 'date-fns'
+import {
+  add,
+  sub,
+  addDays,
+  endOfMonth,
+  format,
+  getDate,
+  startOfMonth,
+  startOfWeek,
+  compareAsc,
+  startOfToday,
+} from 'date-fns'
 import ruLocale from 'date-fns/locale/ru'
 import { View } from 'react-native'
 
-const getWeekDays = (date) => {
+const getWeekDays = (date, startDayNumberOfMonth) => {
   const startDateOfMonth = startOfMonth(date, { weekStartsOn: 1 })
   const startOfWeek = startOfMonth(date, { weekStartsOn: 1 })
-  /* console.log('startDateOfMonth', startDateOfMonth)
-  console.log('startOfWeek', startOfWeek) */
+  console.log('дата начала месяца', startDateOfMonth)
+  /* console.log('startOfWeek', startOfWeek) */
   const endDayNumberOfMonth = format(endOfMonth(date), 'd')
+  console.log('сколько дней в месяце', endDayNumberOfMonth)
 
   const final = []
+
+  const correct = endDayNumberOfMonth % 10 ? startDayNumberOfMonth + 1 : startDayNumberOfMonth - 1
 
   /* нужно от нуля идти до последнего числа месяца, 
   после этого по циклу проходить по каждой неделе от начала недели и до ее конца 
   и все это пихать в фильный массив как отдельные объекты */
-  for (let i = 0; i < endDayNumberOfMonth; i++) {
+  for (let i = 0 - correct; i < endDayNumberOfMonth; i++) {
     const allDatesInMonth = addDays(startDateOfMonth, i)
 
     final.push({
       id: i,
       formattedRU: format(allDatesInMonth, 'EEEEEE', { locale: ruLocale }),
       formatted: format(allDatesInMonth, 'EEE'),
+      formattedDate: format(allDatesInMonth, 'dd/MM/yyyy'),
       date: allDatesInMonth,
       day: getDate(allDatesInMonth),
     })
@@ -31,10 +46,18 @@ const getWeekDays = (date) => {
   return final
 }
 
-const Calendar = ({ date, navigation }) => {
-  const currentDayNumber = format(date, 'd')
+const Calendar = ({ date, navigation, operatingHours }) => {
+  const today = startOfToday()
+  const [currDate, setCurrDate] = useState(today)
+  const headerTime = format(currDate, 'EEE p, dd MMM')
+  const currentDayNumber = format(currDate, 'd')
   const [week, setWeek] = useState([])
   const [isChoosed, setIsChoosed] = useState(currentDayNumber)
+  /* console.log('operatingHours', operatingHours) */
+
+  const startDayNumberOfMonth = Number(format(startOfMonth(date), 'i'))
+  console.log('номер дня недели начала месяца', startDayNumberOfMonth)
+
   const times = [
     '09:00',
     '09:30',
@@ -59,19 +82,31 @@ const Calendar = ({ date, navigation }) => {
     '19:00',
     '19:30',
   ]
-  const thisMonth = toCapitalizeMonth(format(date, 'LLLL'))
-  const nextMonth = format(add(new Date(date), { months: 1 }), 'LLLL')
-  const prevMonth = format(sub(new Date(date), { months: 1 }), 'LLLL')
-  const thisYear = format(date, 'yyyy')
-  console.log(isChoosed)
+  const thisMonth = toCapitalizeMonth(format(currDate, 'LLLL'))
+  const nextMonth = format(add(new Date(currDate), { months: 1 }), 'LLLL')
+  const prevMonth = format(sub(new Date(currDate), { months: 1 }), 'LLLL')
+  const thisYear = format(currDate, 'yyyy')
+  /* console.log(isChoosed) */
+
+  function toDateFormat(d) {
+    return format(d, 'dd/M/yyyy')
+  }
 
   function toCapitalizeMonth(m) {
     return m.charAt(0).toUpperCase() + m.slice(1)
   }
 
+  function compareDates(p, f) {
+    if (compareAsc(p, f) == 1) {
+      return 'firstLarge'
+    } else if (compareAsc(p, f) == -1) {
+      return 'secondLarge'
+    } else return 'equals'
+  }
+
   useEffect(() => {
-    setWeek(getWeekDays(date))
-  }, [date])
+    setWeek(getWeekDays(currDate, startDayNumberOfMonth))
+  }, [currDate])
 
   const daysNames = Object.entries(week)
     .slice(0, 7)
@@ -82,10 +117,10 @@ const Calendar = ({ date, navigation }) => {
       <CalendarHolder>
         <H1>{thisMonth}</H1>
         <MonthsHolder>
-          <OneMonth onPress={() => console.log('prevMonth')}>
+          <OneMonth onPress={() => setCurrDate(sub(new Date(currDate), { months: 1 }))}>
             <H4>{prevMonth}</H4>
           </OneMonth>
-          <OneMonth onPress={() => console.log('nextMonth')}>
+          <OneMonth onPress={() => setCurrDate(add(new Date(currDate), { months: 1 }))}>
             <H4>{nextMonth}</H4>
           </OneMonth>
         </MonthsHolder>
@@ -105,34 +140,52 @@ const Calendar = ({ date, navigation }) => {
 
       <Container>
         {week.map((weekDay) => {
+          /* console.log('weekDay', weekDay.date, currDate) */
+          /* console.log('_________', compareDates(weekDay.date, currDate)) */
+          const compare = compareDates(weekDay.date, currDate)
           return (
-            <Week key={weekDay.day + weekDay.formatted}>
-              <DayButton
+            <Week key={weekDay.date}>
+              {compare === 'secondLarge' ? (
+                <DayButton
+                  style={dayButtonClosed}
+                  onPress={() => {
+                    console.log('secondLargeButton')
+                  }}
+                >
+                  <NumberText style={numberTextClosed}>{weekDay.day}</NumberText>
+                </DayButton>
+              ) : (
+                <DayButton
+                  style={null}
+                  onPress={() => {
+                    console.log('secondLargeButton')
+                  }}
+                >
+                  <NumberText style={null}>{weekDay.day}</NumberText>
+                </DayButton>
+              )}
+              {/* <DayButton
                 style={
-                  currentDayNumber - 1 > weekDay.id
+                  weekDay.formattedDate < today
                     ? dayButtonClosed
-                    : weekDay.id + 1 === isChoosed
+                    : weekDay.formattedDate === today
                     ? dayButtonActivated
-                    : weekDay.id % 3 === 0
-                    ? dayButtonActive
                     : null
                 }
                 onPress={() => setIsChoosed(weekDay.id + 1)}
               >
                 <NumberText
                   style={
-                    currentDayNumber - 1 > weekDay.id
+                    weekDay.formattedDate < today
                       ? numberTextClosed
-                      : weekDay.id + 1 === isChoosed
-                      ? numberTextActivated
-                      : weekDay.id % 3 === 0
-                      ? numberTextActive
-                      : null
+                      : weekDay.formattedDate > today
+                      ? null
+                      : numberTextActivated
                   }
                 >
                   {weekDay.day}
                 </NumberText>
-              </DayButton>
+              </DayButton> */}
             </Week>
           )
         })}
@@ -143,7 +196,12 @@ const Calendar = ({ date, navigation }) => {
         <RoundsRowHolderTimes>
           {times.map((time) => {
             return (
-              <RoundTime onPress={() => navigation.navigate('ConfirmAppointmentScreen')} key={time}>
+              <RoundTime
+                onPress={() =>
+                  navigation.navigate('ConfirmAppointmentScreen', { headerTime: headerTime })
+                }
+                key={time}
+              >
                 <H5Active>{time}</H5Active>
               </RoundTime>
             )

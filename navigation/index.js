@@ -36,9 +36,9 @@ const AuthLoadingScreen = (props) => {
     setLoading(false)
   } */
 
-  const loadApp = () => {
+  const loadApp = async () => {
     try {
-      dispatch(authAction.loginCurrent())
+      await dispatch(authAction.loginCurrent())
     } catch (err) {
       console.log(err)
     }
@@ -57,11 +57,7 @@ const AuthLoadingScreen = (props) => {
   let view = ''
 
   if (loading) {
-    view = (
-      <View style={styles.container}>
-        <ActivityIndicator size='large' color='#aaa' />
-      </View>
-    )
+    view = <ActivityIndicator style={{ paddingTop: 20 }} size='large' color='#2A86FF' />
   } else if (!userToken) {
     view = <AuthNavigator />
   } else {

@@ -1,6 +1,9 @@
 import React from 'react'
-import styled from 'styled-components/native'
+
 import { getAvatarColor } from '../../utils'
+import Avatar from './Avatar'
+import FirstLetter from './FirstLetter'
+import FirstLetterHandler from './FirstLetterHandler'
 
 const Ava = ({ item }) => {
   if (item.person.photoLink) {
@@ -15,27 +18,5 @@ const Ava = ({ item }) => {
     )
   }
 }
-
-const FirstLetter = styled.Text({
-  fontSize: '24px',
-  lineHeight: '30px',
-  fontWeight: 'bold',
-})
-
-const FirstLetterHandler = styled.View({
-  borderRadius: '50px',
-  height: '50px',
-  width: '50px',
-  marginRight: '15px',
-  justifyContent: 'center',
-  alignItems: 'center',
-})
-
-const Avatar = styled.Image({
-  borderRadius: '50px',
-  height: '50px',
-  width: '50px',
-  marginRight: '15px',
-})
 
 export default Ava

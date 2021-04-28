@@ -1,139 +1,92 @@
-import React, { useState, useEffect } from "react";
-import { useFocusEffect, useScrollToTop } from "@react-navigation/native";
-import { Animated, SectionList, RefreshControl, Alert } from "react-native";
-import styled from "styled-components/native";
-import { Octicons } from "@expo/vector-icons";
-import { RectButton } from "react-native-gesture-handler";
-import Swipeable from "react-native-gesture-handler/Swipeable";
+import React from 'react'
+import { useFocusEffect, useScrollToTop } from '@react-navigation/native'
+import { SectionList, RefreshControl } from 'react-native'
+import styled from 'styled-components/native'
+import { useSelector } from 'react-redux'
 
-import { appointmentsApi } from "../utils/api";
-import { Appointment, SectionTitle } from "../src/components";
+import { appointmentsApi } from '../utils/api'
+import { Appointment, SectionTitle } from '../src/components'
+import { addMonths, format } from 'date-fns'
 
-const HomeScreen = ({ navigation, route }) => {
-  const [data, setData] = useState(null);
-  const [refreshing, setRefreshing] = useState(false);
-  const [refsArray, setRefsArray] = useState([]);
-  const [noConnection, setNoConnection] = useState(false);
-  const ref = React.useRef(null);
+const HomeScreen = () => {
+  const [data, setData] = React.useState([])
+  const [refreshing, setRefreshing] = React.useState(false)
+  const token = useSelector((state) => state.auth.token)
+  const ref = React.useRef(null)
 
   useFocusEffect(
     React.useCallback(() => {
-      cleanFetch();
+      cleanFetch()
     }, [])
-  );
+  )
 
-  useScrollToTop(ref);
+  useScrollToTop(ref)
 
-  const cleanFetch = () => {
-    appointmentsApi
-      .get()
-      .then(({ data }) => {
-        setData(data.message.sort());
-        if (data && data.status === "success") {
-          setNoConnection(false);
+  const groupArr = (arr) => {
+    const newArr = []
+
+    for (const key in arr) {
+      if (Object.hasOwnProperty.call(arr, key)) {
+        const element = {
+          date: arr[key].date,
+          startTime: arr[key].startTime,
+          endTime: arr[key].endTime,
+          patientId: arr[key].patientId,
+          data: arr[key],
+        }
+        newArr.push(element)
+      }
+    }
+
+    const obj = newArr.reduce((acc, cur) => {
+      if (!acc[cur.date]) {
+        acc[cur.date] = []
+      }
+      acc[cur.date].push(cur)
+      return acc
+    }, {})
+    return Object.keys(obj)
+      .map((date) => {
+        return {
+          date,
+          data: obj[date],
         }
       })
+      .sort((a, b) => (a.date > b.date ? 1 : -1))
+  }
+
+  const cleanFetch = () => {
+    const today = new Date()
+    const startDate = format(today, 'yyyy-MM-dd')
+    const endDate = format(addMonths(today, 1), 'yyyy-MM-dd')
+
+    appointmentsApi
+      .getAll(token, startDate, endDate)
+      .then(({ data }) => {
+        setData(groupArr(data))
+      })
       .catch((error) => {
-        error.request ? console.log(error.request) : console.log("Error", error.message);
-        setNoConnection(true);
+        console.log('Error', error.message)
       })
       .finally((resp) => {
-        setRefreshing(false);
-      });
-  };
+        setRefreshing(false)
+      })
+  }
 
   const fetchAppointments = () => {
-    setRefreshing(true);
-    cleanFetch();
-  };
+    setRefreshing(true)
+    cleanFetch()
+  }
 
-  useEffect(fetchAppointments, []);
-
-  const removeAppointment = (id, closeRaw) => {
-    Alert.alert(
-      "Удаление приема",
-      "Вы действительно хотите удалить прием?",
-      [
-        {
-          text: "Отмена",
-          onPress: () => {
-            closeRaw();
-          },
-          style: "cancel",
-        },
-        {
-          text: "Да, удалить",
-          onPress: () => {
-            const result = data.map((group) => {
-              const data = (group.data = group.data.filter((item) => item._id !== id));
-              group.data = data;
-              return group;
-            });
-            closeRaw();
-            setData(result);
-            appointmentsApi.remove(id);
-          },
-          style: "default",
-        },
-      ],
-      { cancelable: false }
-    );
-  };
-
-  renderRightAction = (text, color, x, progress, id, item, index) => {
-    const trans = progress.interpolate({
-      inputRange: [0, 1],
-      outputRange: [x, 0],
-    });
-
-    const closeRow = () => {
-      refsArray[item._id].close();
-    };
-
-    const pressHandler = () => {
-      if (text === "pencil") {
-        closeRow();
-        navigation.navigate("EditAppointment", { patientId: item });
-      } else {
-        removeAppointment(id, closeRow);
-      }
-    };
-
-    return (
-      <Animated.View style={{ flex: 1, transform: [{ translateX: trans }] }}>
-        <RectButton
-          style={{
-            alignItems: "center",
-            flex: 1,
-            justifyContent: "center",
-            backgroundColor: color,
-          }}
-          onPress={pressHandler}
-        >
-          <ActionText>
-            <Octicons name={text} size={24} color="white" />
-          </ActionText>
-        </RectButton>
-      </Animated.View>
-    );
-  };
-
-  renderRightActions = (progress, id, item, index) => (
-    <RightButtonsHandler>
-      {renderRightAction("pencil", "#B4C1CB", 160, progress, id, item, index)}
-      {renderRightAction("trashcan", "#F85A5A", 80, progress, id, item, index)}
-    </RightButtonsHandler>
-  );
+  React.useEffect(fetchAppointments, [])
 
   const listEmptyComponent = () => {
-    return noConnection === false ? (
-      <ActionText style={{ color: "#816CFF" }}>Нет запланированных приемов.. 💁‍♀️</ActionText>
-    ) : (
-      <ActionText style={{ color: "#F38181" }}>
-        Пожалуйста проверьте соединение с сервером... ⚙️
-      </ActionText>
-    );
-  };
+    return (
+      refreshing === false && (
+        <ActionText style={{ color: '#816CFF' }}>Нет запланированных приемов.. 💁‍♀️</ActionText>
+      )
+    )
+  }
 
   return (
     <Container>
@@ -141,48 +94,29 @@ const HomeScreen = ({ navigation, route }) => {
         ref={ref}
         style={{ paddingLeft: 20, paddingRight: 20 }}
         sections={data ? data : null}
-        keyExtractor={(item) => item._id}
-        renderItem={({ item, index }) => (
-          <Swipeable
-            ref={(ref) => {
-              refsArray[item._id] = ref;
-            }}
-            renderRightActions={(progress) => renderRightActions(progress, item._id, item, index)}
-            index={item._id}
-            friction={2}
-          >
-            <Appointment navigation={navigation} item={item} index={index} />
-          </Swipeable>
-        )}
+        keyExtractor={(item) => item.data.id}
+        renderItem={({ item, index }) => <Appointment item={item} index={index} />}
         renderSectionHeader={({ section }) =>
-          section.data.length > 0 ? <SectionTitle>{section.title}</SectionTitle> : null
+          section.data.length > 0 && <SectionTitle>{section.date}</SectionTitle>
         }
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchAppointments} />}
         ListEmptyComponent={() => listEmptyComponent()}
+        stickySectionHeadersEnabled={true}
       />
-
-      {/* убрал круглую кнопку, удалил импорт данной кнопки из компонентов
-			<PlusButton onPress={() => navigation.navigate('AddPatient')} /> */}
     </Container>
-  );
-};
+  )
+}
 
 const Container = styled.SafeAreaView({
   flex: 1,
-  backgroundColor: "#fff",
-});
-
-const RightButtonsHandler = styled.View({
-  width: 160,
-  flexDirection: "row",
-  marginLeft: 20,
-});
+  backgroundColor: '#fff',
+})
 
 const ActionText = styled.Text({
-  color: "white",
+  color: 'white',
   fontSize: 16,
-  backgroundColor: "transparent",
+  backgroundColor: 'transparent',
   padding: 10,
-});
+})
 
-export default HomeScreen;
+export default HomeScreen

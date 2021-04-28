@@ -34,8 +34,9 @@ export const getCommon = (token) => {
       for (const key in respData.users) {
         loadedUsers.push(
           new User(
-            respData.users[key].person.id,
+            respData.users[key].id,
             respData.users[key].person.fullName,
+            respData.users[key].person.phone,
             respData.users[key].rules[0].isEnabled,
             respData.users[key].rules[0].isDentist,
             respData.users[key].rules[0].isAssistant

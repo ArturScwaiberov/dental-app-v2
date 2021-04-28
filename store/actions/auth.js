@@ -5,12 +5,20 @@ export const SIGNOUT = 'SIGNOUT'
 export const loginCurrent = () => {
   return async (dispatch) => {
     try {
-      const user = await Auth.currentAuthenticatedUser()
+      const user = await Auth.currentSession()
+      const token = (await Auth.currentSession()).getIdToken().getJwtToken()
 
-      dispatch({
-        type: SIGNIN,
-        token: user.signInUserSession.idToken.jwtToken,
-        customerId: user.signInUserSession.idToken.payload.sub,
+      const cognitoUser = await Auth.currentAuthenticatedUser()
+      const currentSession = await Auth.currentSession()
+      cognitoUser.refreshSession(currentSession.refreshToken, (err, session) => {
+        const { idToken, refreshToken, accessToken } = session
+
+        dispatch({
+          type: SIGNIN,
+          token: idToken.jwtToken,
+          customerId: idToken.payload.sub,
+          refreshToken: refreshToken.token,
+        })
       })
     } catch (err) {
       console.log('ERROR auto sign in:', err)

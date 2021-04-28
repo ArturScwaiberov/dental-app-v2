@@ -1,122 +1,96 @@
 import React from 'react'
 import styled from 'styled-components/native'
 
-import GrayText from './GrayText'
-import Badge from './Badge'
 import { getAvatarColor } from '../../utils'
+import Avatar from './Avatar'
+import GrayText from './GrayText'
+import FirstLetter from './FirstLetter'
+import FirstLetterHandler from './FirstLetterHandler'
+import { useNavigation } from '@react-navigation/core'
 
-const Appointment = ({ navigation, item, index }) => {
-	const { patientId, diagnosis, active, time } = item
+const Appointment = ({ item, index }) => {
+  const { endTime, startTime } = item
+  const currentPatient = item.data.patient?.person
+  const navigation = useNavigation()
 
-	const Ava = () => {
-		if (patientId.avatar) {
-			return <Avatar source={{ uri: patientId.avatar }} />
-		} else {
-			const firstLetter = patientId.fullName[0].toUpperCase()
-			const avatarColors = getAvatarColor(firstLetter)
-			return (
-				<FirstLetterHandler style={{ backgroundColor: avatarColors.background }}>
-					<FirstLetter style={{ color: avatarColors.color }}>{firstLetter}</FirstLetter>
-				</FirstLetterHandler>
-			)
-		}
-	}
+  const pressHandler = () => {
+    currentPatient && item.data.patientId
+      ? navigation.navigate('Patient', {
+          item: currentPatient.id,
+          patientId: item.data.patientId,
+        })
+      : null
+  }
 
-	return (
-		<GroupItem
-			onPress={() =>
-				navigation.navigate('Patient', {
-					userName: patientId.fullName,
-					userPhone: patientId.phone,
-					patientId: patientId._id,
-				})
-			}
-		>
-			<Ava />
-			<GroupDesc>
-				<FullName>{patientId.fullName}</FullName>
-				<GrayText>{diagnosis}</GrayText>
-			</GroupDesc>
-			{/* <Badge active={active}>{time}</Badge> */}
-			<GroupTime active={index === 0 ? true : false}>
-				<TimeText active={index === 0 ? true : false}>{time}</TimeText>
-			</GroupTime>
-		</GroupItem>
-	)
+  const Ava = () => {
+    if (currentPatient) {
+      if (currentPatient?.photoLink) {
+        return <Avatar source={{ uri: currentPatient.photoLink }} />
+      } else {
+        const firstLetter = currentPatient?.fullName[0].toUpperCase() || ''
+        const avatarColors = getAvatarColor(firstLetter)
+        return (
+          <FirstLetterHandler style={{ backgroundColor: avatarColors.background }}>
+            <FirstLetter style={{ color: avatarColors.color }}>{firstLetter}</FirstLetter>
+          </FirstLetterHandler>
+        )
+      }
+    } else {
+      return (
+        <FirstLetterHandler style={{ backgroundColor: '#eee' }}>
+          <FirstLetter style={{ color: '#888' }}>?</FirstLetter>
+        </FirstLetterHandler>
+      )
+    }
+  }
+
+  return (
+    <GroupItem onPress={() => pressHandler()}>
+      <Ava />
+      <GroupDesc>
+        <FullName>{currentPatient ? currentPatient.fullName : 'No patient accepted'}</FullName>
+        <GrayText>{item.data.note}</GrayText>
+      </GroupDesc>
+      <GroupTime active={index === 0 ? true : false}>
+        <TimeText active={index === 0 ? true : false}>
+          {startTime.slice(0, 5)} - {endTime.slice(0, 5)}
+        </TimeText>
+      </GroupTime>
+    </GroupItem>
+  )
 }
-
-Appointment.defaultProps = {
-	title: 'Untitled',
-	items: [],
-}
-
-/* const GroupDate = styled.Text`
-	color: ${(props) => (props.active ? '#FFF' : '#4294FF')};
-	background: ${(props) => (props.active ? '#2A86FF' : '#E9F5FF')};
-	border-color: ${(props) => (props.active ? '#2A86FF' : '#E9F5FF')};
-	border-width: 1px;
-	border-radius: 16px;
-	overflow: hidden;
-	font-size: 14px;
-	width: 70px;
-	height: 32px;
-	text-align: center;
-	line-height: 30px;
-` */
 
 const TimeText = styled.Text`
-	color: ${(props) => (props.active ? '#FFF' : '#4294FF')};
-	font-size: 14px;
-	font-weight: 600;
+  color: ${(props) => (props.active ? '#FFF' : '#4294FF')};
+  font-size: 14px;
+  font-weight: 600;
 `
 
 const GroupTime = styled.View`
-	background: ${(props) => (props.active ? '#2A86FF' : '#E9F5FF')};
-	border-radius: 18px;
-	justify-content: center;
-	align-items: center;
-	width: 70px;
-	height: 32px;
+  background: ${(props) => (props.active ? '#2A86FF' : '#E9F5FF')};
+  border-radius: 10px;
+  justify-content: center;
+  align-items: center;
+  padding-horizontal: 6px;
+  padding-vertical: 6px;
 `
 
 const GroupDesc = styled.View({
-	flex: 1,
+  flex: 1,
 })
 
 const FullName = styled.Text({
-	fontSize: '16px',
-	fontWeight: 600,
-})
-
-const FirstLetter = styled.Text({
-	fontSize: '26px',
-	fontWeight: 'bold',
-	marginLeft: 1,
-})
-
-const FirstLetterHandler = styled.View({
-	borderRadius: '50px',
-	height: '40px',
-	width: '40px',
-	marginRight: '15px',
-	justifyContent: 'center',
-	alignItems: 'center',
-})
-
-const Avatar = styled.Image({
-	borderRadius: '50px',
-	height: '40px',
-	width: '40px',
-	marginRight: '15px',
+  fontSize: '16px',
+  fontWeight: 600,
 })
 
 const GroupItem = styled.TouchableOpacity({
-	flexDirection: 'row',
-	alignItems: 'center',
-	paddingBottom: '20px',
-	paddingTop: '20px',
-	borderBottomWidth: '1px',
-	borderBottomColor: '#F3F3F3',
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingBottom: '20px',
+  paddingTop: '20px',
+  borderBottomWidth: '1px',
+  borderBottomColor: '#F3F3F3',
 })
 
 export default Appointment

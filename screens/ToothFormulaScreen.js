@@ -280,7 +280,7 @@ const ToothFormulaScreen = ({ route, navigation }) => {
     <Container>
       <ScrollView style={{ paddingHorizontal: 20 }}>
         {isLoading ? (
-          <ActivityIndicator size='small' />
+          <ActivityIndicator style={{ paddingTop: 20 }} size='large' color='#2A86FF' />
         ) : (
           <>
             <SvgCss xml={xml} style={{ height: 400 }} />

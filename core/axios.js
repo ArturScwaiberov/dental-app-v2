@@ -1,11 +1,5 @@
 import axios from 'axios'
-import Constants from 'expo-constants'
-const { manifest } = Constants
 
-axios.defaults.baseURL =
-	'http://' +
-	(typeof manifest.packagerOpts === 'object' && manifest.packagerOpts.dev
-		? manifest.debuggerHost.split(`:`).shift().concat(`:6666`)
-		: `api.example.com`)
+axios.defaults.baseURL = 'https://cpfxbicmq4.execute-api.us-east-1.amazonaws.com/prod/v1/'
 
 export default axios

@@ -21,12 +21,22 @@ import { Button, Icon } from 'native-base'
 const Tab = createBottomTabNavigator()
 const Stack = createStackNavigator()
 
-const HeaderRight = ({ patientId, target }) => {
+const HeaderRight = ({ target }) => {
+  const navigation = useNavigation()
+
+  return (
+    <Button transparent onPress={() => navigation.navigate(target)}>
+      <Icon name='plus' type='Entypo' style={{ fontSize: 26, color: '#2A86FF' }} />
+    </Button>
+  )
+}
+
+const HeaderRightEdit = ({ target, patientId }) => {
   const navigation = useNavigation()
 
   return (
     <Button transparent onPress={() => navigation.navigate(target, { patientId })}>
-      <Icon name='plus' type='Entypo' style={{ fontSize: 26, color: '#2A86FF' }} />
+      <Icon name='user-edit' type='FontAwesome5' style={{ fontSize: 22, color: '#2A86FF' }} />
     </Button>
   )
 }
@@ -43,17 +53,17 @@ const navOptionsNoBackButton = {
   headerLeft: () => {},
 }
 
-const navOptions = {
+const navOptionsBackButton = {
   headerTintColor: '#2A86FF',
-  headerTitleAlign: 'left',
+  headerTitleAlign: 'center',
   headerTitleStyle: {
     fontWeight: 'bold',
-    fontSize: 28,
-    textAlign: 'center',
+    fontSize: 20,
   },
+  headerBackTitleVisible: false,
 }
 
-function Appointments({ route, navigation }) {
+function AppointmentCalendar({ route, navigation }) {
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -67,41 +77,40 @@ function Appointments({ route, navigation }) {
       <Stack.Screen
         name='ConfirmAppointmentScreen'
         component={ConfirmAppointmentScreen}
-        options={{
-          title: 'Укажите подробности',
-          ...navOptionsNoBackButton,
+        options={({ route }) => {
+          return {
+            title: route.params ? route.params.headerTime : 'Укажите подробности',
+            ...navOptionsNoBackButton,
+          }
         }}
       />
+    </Stack.Navigator>
+  )
+}
+
+function AppointmentsList({ route, navigation }) {
+  return (
+    <Stack.Navigator initialRouteName='AppointmentsList'>
       <Stack.Screen
-        name='Home'
+        name='AppointmentsList'
         component={HomeScreen}
-        options={{
-          title: 'Приемы',
-          ...navOptionsNoBackButton,
-        }}
+        options={{ title: 'Appointments List', ...navOptionsNoBackButton }}
       />
       <Stack.Screen
         name='Patient'
         component={PatientScreen}
         options={{
           title: 'Карта пациента',
-          ...navOptionsNoBackButton,
+          ...navOptionsBackButton,
         }}
       />
+
       <Stack.Screen
         name='ToothFormula'
         component={ToothFormulaScreen}
         options={{
           title: 'Формула зубов',
-          ...navOptionsNoBackButton,
-        }}
-      />
-      <Stack.Screen
-        name='EditAppointment'
-        component={EditAppointmentScreen}
-        options={{
-          title: 'Редактировать прием',
-          ...navOptionsNoBackButton,
+          ...navOptionsBackButton,
         }}
       />
     </Stack.Navigator>
@@ -138,7 +147,7 @@ function Patients({ route, navigation }) {
               fontSize: 20,
             },
             headerRight: () => (
-              <HeaderRight target={'AddAppointment'} patientId={route.params.patientId} />
+              <HeaderRightEdit target={'EditPatient'} patientId={route.params.patientId} />
             ),
           }
         }}
@@ -172,20 +181,6 @@ function Patients({ route, navigation }) {
         }}
       />
       <Stack.Screen
-        name='AddAppointment'
-        component={AddAppointmentScreen}
-        options={{
-          title: 'Добавить прием',
-          headerTintColor: '#2A86FF',
-          headerTitleAlign: 'center',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 20,
-          },
-          headerBackTitleVisible: false,
-        }}
-      />
-      <Stack.Screen
         name='EditPatient'
         component={EditPatientScreen}
         options={{
@@ -208,13 +203,13 @@ function Settings({ route, navigation, signOut }) {
     <Stack.Navigator initialRouteName='Settings'>
       <Stack.Screen
         name='Settings'
+        component={LogoutScreen}
         options={{
           title: 'Настройки',
           ...navOptionsNoBackButton,
         }}
-      >
-        {() => <LogoutScreen signOut={signOut} />}
-      </Stack.Screen>
+        signOut={signOut}
+      />
     </Stack.Navigator>
   )
 }
@@ -225,21 +220,29 @@ function Home({ navigation, signOut }) {
       tabBarOptions={{
         inactiveTintColor: '#ccc',
         activeTintColor: '#2A86FF',
-        showLabel: false,
+        /* showLabel: false, */
       }}
     >
       <Tab.Screen
-        name='Приемы'
-        component={Appointments}
+        name='AppointmentsCalendarTab'
+        component={AppointmentCalendar}
         options={{
-          tabBarLabel: 'Приемы',
+          tabBarLabel: 'Запись на прием',
           tabBarIcon: ({ color }) => (
             <Icon name='calendar' type='Entypo' style={{ color: color }} />
           ),
         }}
       />
       <Tab.Screen
-        name='Пациенты'
+        name='AppointmentsListTab'
+        component={AppointmentsList}
+        options={{
+          tabBarLabel: 'Список приемов',
+          tabBarIcon: ({ color }) => <Icon name='list' type='Entypo' style={{ color: color }} />,
+        }}
+      />
+      <Tab.Screen
+        name='PatientsListTab'
         component={Patients}
         options={{
           tabBarLabel: 'Пациенты',
@@ -249,14 +252,14 @@ function Home({ navigation, signOut }) {
         }}
       />
       <Tab.Screen
-        name='Настройки'
+        name='SettingsTab'
+        component={Settings}
         options={{
           tabBarLabel: 'Настройки',
           tabBarIcon: ({ color }) => <Icon name='cog' type='Entypo' style={{ color: color }} />,
         }}
-      >
-        {() => <Settings signOut={signOut} />}
-      </Tab.Screen>
+        signOut={signOut}
+      />
     </Tab.Navigator>
   )
 }
