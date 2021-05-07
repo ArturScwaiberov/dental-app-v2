@@ -5,7 +5,7 @@ import { endOfMonth, format, startOfMonth } from 'date-fns'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { patientsApi } from '../utils'
-import Calendar from '../src/components/Calendar'
+import CalendarV2 from '../src/components/CalendarV2'
 import NewCalendar from '../src/components/NewCalendar'
 import * as commonActions from '../store/actions/common'
 import * as patientsActions from '../store/actions/patients'
@@ -79,7 +79,7 @@ const AppointmentDateScreen = ({ navigation, route }) => {
         {refreshing ? (
           <Spinner color='blue' size='large' color='#2A86FF' />
         ) : (
-          <Calendar
+          <CalendarV2
             date={date}
             data={data}
             navigation={navigation}
