@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import * as dateFns from 'date-fns'
+import ruLocale from 'date-fns/locale/ru'
 import { Spinner } from 'native-base'
 import React, { useState } from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -19,6 +20,11 @@ const CalendarHeader = ({ date, onNextMonth, onPreviousMonth }) => {
 
 	const thisYear = dateFns.format(date, 'yyyy')
 
+	const isPreviousDisabled = dateFns.isSameMonth(
+		dateFns.subMonths(date, 1),
+		dateFns.subMonths(new Date(), 1),
+	)
+
 	return (
 		<View
 			style={{
@@ -29,8 +35,13 @@ const CalendarHeader = ({ date, onNextMonth, onPreviousMonth }) => {
 			}}
 		>
 			<View style={{ flexBasis: '30%' }}>
-				<OneMonth onPress={onPreviousMonth}>
-					<H4>{previousMonth}</H4>
+				<OneMonth
+					onPress={onPreviousMonth}
+					disabled={isPreviousDisabled}
+				>
+					<H4 style={isPreviousDisabled ? styles.disabled : null}>
+						{previousMonth}
+					</H4>
 				</OneMonth>
 			</View>
 			<View style={{ flexBasis: '40%' }}>
@@ -88,11 +99,13 @@ const Days = ({ date }) => {
 	const [weekInMonthIndex, setWeekInMonthIndex] = useState(null)
 	const [isLoadingTimeSlots, setIsLoadingTimeSlots] = useState(false)
 	const [selectedDay, setSelectedDay] = useState(null)
-	const [freeSlots, setFreeSlots] = useState()
+	const [freeSlots, setFreeSlots] = useState([])
+	const [selectedRoundTimes, setSelectedRoundTimes] = useState([])
 
 	const navigation = useNavigation()
 
 	const token = useSelector((state) => state.auth.token)
+	// console.log(`token`, token)
 
 	const monthStart = dateFns.startOfMonth(date)
 	const monthEnd = dateFns.endOfMonth(monthStart)
@@ -111,29 +124,55 @@ const Days = ({ date }) => {
 	}
 
 	const onDayPress = (weekInMonthIndex, selectedDay) => async () => {
+		if (isLoadingTimeSlots) {
+			return
+		}
+		setSelectedRoundTimes([])
+
 		setWeekInMonthIndex(weekInMonthIndex)
 		setSelectedDay(selectedDay)
 
 		const selectedDayFormated = dateFns.format(selectedDay, 'yyyy-MM-dd')
 
-		if (!isLoadingTimeSlots) {
-			setIsLoadingTimeSlots(true)
-			console.log('fetching')
-			try {
-				const { data } = await appointmentsApi.getFreeSlots(token, {
-					day: selectedDayFormated,
-					interval: 15,
-				})
-				// setFreeSlots(data)
-				setFreeSlots(data.filter((_, i) => i < 10))
-				console.log('fetched', data.length)
-			} catch (error) {
-				console.log('error', error)
-			}
+		setIsLoadingTimeSlots(true)
+		try {
+			const { data } = await appointmentsApi.getFreeSlots(token, {
+				day: selectedDayFormated,
+				interval: 15,
+			})
+
+			setFreeSlots(
+				data
+					.filter((_, i) => i < 90)
+					.map((s) => ({
+						...s,
+						cDate: dateFns.parse(s.time, 'HH:mm', new Date(s.date)),
+					}))
+					.filter((s) => dateFns.isFuture(s.cDate)),
+			)
+		} catch (error) {
+			console.log('error', error)
 		}
 
 		setIsLoadingTimeSlots(false)
 	}
+
+	const roundTimePressHandler = (time) => () => {
+		const roundTimes = [...selectedRoundTimes, time]
+
+		navigation.navigate('ConfirmAppointmentScreen', {
+			headerTime: `${roundTimes[0]}, ${dateFns.format(
+				selectedDay,
+				'dd MMM',
+			)}`,
+			roundTimes,
+			day: dateFns.format(selectedDay, 'dd MMM'),
+		})
+	}
+
+	const roundTimeLongPressHandler = (time) => () =>
+		setSelectedRoundTimes((t) => [...t, time])
+
 	return (
 		<View>
 			{weeksInMonth.map((week, i) => (
@@ -224,25 +263,51 @@ const Days = ({ date }) => {
 									</H5>
 									<RoundsRowHolderTimes>
 										{freeSlots.map((s, i) => {
+											const isSelected = selectedRoundTimes.find(
+												(t) => t === s.time,
+											)
+
 											return (
 												<RoundTime
-													onPress={() =>
-														navigation.navigate(
-															'ConfirmAppointmentScreen',
-															{
-																headerTime: `${
-																	s.time
-																}, ${dateFns.format(
-																	selectedDay,
-																	'dd MMM',
-																)}`,
-															},
-														)
-													}
+													onPress={roundTimePressHandler(
+														s.time,
+													)}
+													onLongPress={roundTimeLongPressHandler(
+														s.time,
+													)}
 													key={i}
+													style={
+														isSelected
+															? {
+																	backgroundColor:
+																		'#08cf4a',
+															  }
+															: null
+													}
 												>
-													<H5Active>
-														{s.time}
+													<H5Active
+														style={
+															isSelected
+																? {
+																		color:
+																			'#fff',
+																  }
+																: null
+														}
+													>
+														{dateFns.format(
+															dateFns.parse(
+																s.time,
+																'HH:mm',
+																new Date(
+																	selectedDay,
+																),
+															),
+															'HH:mm',
+															{
+																locale: ruLocale,
+															},
+														)}
 													</H5Active>
 												</RoundTime>
 											)
