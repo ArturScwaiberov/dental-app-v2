@@ -100,7 +100,7 @@ const Days = ({ date }) => {
 	const [isLoadingTimeSlots, setIsLoadingTimeSlots] = useState(false)
 	const [selectedDay, setSelectedDay] = useState(null)
 	const [freeSlots, setFreeSlots] = useState([])
-	const [selectedRoundTimes, setSelectedRoundTimes] = useState([])
+	const [selectedTimeSlots, setSelectedTimeSlots] = useState([])
 
 	const navigation = useNavigation()
 
@@ -127,7 +127,7 @@ const Days = ({ date }) => {
 		if (isLoadingTimeSlots) {
 			return
 		}
-		setSelectedRoundTimes([])
+		setSelectedTimeSlots([])
 
 		setWeekInMonthIndex(weekInMonthIndex)
 		setSelectedDay(selectedDay)
@@ -140,14 +140,16 @@ const Days = ({ date }) => {
 				day: selectedDayFormated,
 				interval: 15,
 			})
+			console.log('freeSlots:', data.length)
 
 			setFreeSlots(
 				data
-					.filter((_, i) => i < 90)
+					.filter((s, i) => i < 37)
 					.map((s) => ({
 						...s,
 						cDate: dateFns.parse(s.time, 'HH:mm', new Date(s.date)),
 					}))
+					.sort((a, b) => dateFns.compareAsc(a.cDate, b.cDate))
 					.filter((s) => dateFns.isFuture(s.cDate)),
 			)
 		} catch (error) {
@@ -156,22 +158,30 @@ const Days = ({ date }) => {
 
 		setIsLoadingTimeSlots(false)
 	}
+	const roundTimePressHandler = (slot) => () => {
+		const slotIndex = selectedTimeSlots.findIndex(
+			(s) => s.time === slot.time,
+		)
 
-	const roundTimePressHandler = (time) => () => {
-		const roundTimes = [...selectedRoundTimes, time]
+		if (slotIndex >= 0) {
+			setSelectedTimeSlots((slots) => slots.slice(0, slotIndex))
+		} else {
+			setSelectedTimeSlots((slots) =>
+				[...slots, slot].sort((a, b) =>
+					dateFns.compareAsc(a.cDate, b.cDate),
+				),
+			)
+		}
 
-		navigation.navigate('ConfirmAppointmentScreen', {
-			headerTime: `${roundTimes[0]}, ${dateFns.format(
-				selectedDay,
-				'dd MMM',
-			)}`,
-			roundTimes,
-			day: dateFns.format(selectedDay, 'dd MMM'),
-		})
+		// navigation.navigate('ConfirmAppointmentScreen', {
+		// 	headerTime: `${roundTimes[0]}, ${dateFns.format(
+		// 		selectedDay,
+		// 		'dd MMM',
+		// 	)}`,
+		// 	roundTimes,
+		// 	day: dateFns.format(selectedDay, 'dd MMM'),
+		// })
 	}
-
-	const roundTimeLongPressHandler = (time) => () =>
-		setSelectedRoundTimes((t) => [...t, time])
 
 	return (
 		<View>
@@ -263,37 +273,65 @@ const Days = ({ date }) => {
 									</H5>
 									<RoundsRowHolderTimes>
 										{freeSlots.map((s, i) => {
-											const isSelected = selectedRoundTimes.find(
-												(t) => t === s.time,
-											)
+											const isSelected =
+												selectedTimeSlots.find(
+													(t) => t.time === s.time,
+												)
+
+											const isDisabled =
+												selectedTimeSlots.length
+													? isSelected
+														? false
+														: Math.abs(
+																dateFns.differenceInMinutes(
+																	s.cDate,
+																	selectedTimeSlots[0]
+																		.cDate,
+																),
+														  ) === 15 ||
+														  Math.abs(
+																dateFns.differenceInMinutes(
+																	s.cDate,
+																	selectedTimeSlots[
+																		selectedTimeSlots.length -
+																			1
+																	].cDate,
+																),
+														  ) === 15
+														? false
+														: true
+													: false
 
 											return (
 												<RoundTime
 													onPress={roundTimePressHandler(
-														s.time,
+														s,
 													)}
-													onLongPress={roundTimeLongPressHandler(
-														s.time,
-													)}
+													disabled={isDisabled}
 													key={i}
-													style={
+													style={[
 														isSelected
 															? {
 																	backgroundColor:
 																		'#08cf4a',
 															  }
-															: null
-													}
+															: null,
+														isDisabled
+															? styles.disabled
+															: null,
+													]}
 												>
 													<H5Active
-														style={
+														style={[
 															isSelected
 																? {
-																		color:
-																			'#fff',
+																		color: '#fff',
 																  }
-																: null
-														}
+																: null,
+															isDisabled
+																? styles.disabled
+																: null,
+														]}
 													>
 														{dateFns.format(
 															dateFns.parse(
@@ -341,7 +379,7 @@ const Days = ({ date }) => {
 	)
 }
 
-const CalendarV2 = ({ operatingHours }) => {
+const CalendarV2 = () => {
 	const [currentDate, setCurrentDate] = useState(new Date())
 
 	const onNextMonth = () => {

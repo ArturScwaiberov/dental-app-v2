@@ -1,6 +1,6 @@
 import React from 'react'
-import { ActivityIndicator } from 'react-native'
-import { Container, Content, Spinner } from 'native-base'
+import { ActivityIndicator, View } from 'react-native'
+import { Container, Content, Icon, Spinner } from 'native-base'
 import { endOfMonth, format, startOfMonth } from 'date-fns'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -79,14 +79,28 @@ const AppointmentDateScreen = ({ navigation, route }) => {
         {refreshing ? (
           <Spinner color='blue' size='large' color='#2A86FF' />
         ) : (
-          <CalendarV2
-            date={date}
-            data={data}
-            navigation={navigation}
-            operatingHours={clinic.operatingHours}
-          />
+          <CalendarV2 />
         )}
       </Content>
+      <View
+				style={{
+					position: 'absolute',
+					bottom: 50,
+					right: 50,
+					width: 50,
+					height: 50,
+					borderRadius: 25,
+					backgroundColor: '#2A86FF',
+					justifyContent: 'center',
+					alignItems: 'center',
+				}}
+			>
+				<Icon
+					name='arrow-right-thick'
+					type='MaterialCommunityIcons'
+					style={{ color: 'white' }}
+				/>
+			</View>
     </Container>
   )
 }
