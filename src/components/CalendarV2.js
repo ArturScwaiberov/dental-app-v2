@@ -1,4 +1,3 @@
-import { useNavigation } from '@react-navigation/native'
 import * as dateFns from 'date-fns'
 import ruLocale from 'date-fns/locale/ru'
 import { Spinner } from 'native-base'
@@ -95,14 +94,16 @@ const DayNames = ({ date }) => {
 	)
 }
 
-const Days = ({ date }) => {
+const Days = ({
+	date,
+	selectedDay,
+	setSelectedDay,
+	selectedTimeSlots,
+	setSelectedTimeSlots,
+}) => {
 	const [weekInMonthIndex, setWeekInMonthIndex] = useState(null)
 	const [isLoadingTimeSlots, setIsLoadingTimeSlots] = useState(false)
-	const [selectedDay, setSelectedDay] = useState(null)
 	const [freeSlots, setFreeSlots] = useState([])
-	const [selectedTimeSlots, setSelectedTimeSlots] = useState([])
-
-	const navigation = useNavigation()
 
 	const token = useSelector((state) => state.auth.token)
 	// console.log(`token`, token)
@@ -140,7 +141,7 @@ const Days = ({ date }) => {
 				day: selectedDayFormated,
 				interval: 15,
 			})
-			console.log('freeSlots:', data.length)
+			console.log('freeSlots:', data)
 
 			setFreeSlots(
 				data
@@ -172,15 +173,6 @@ const Days = ({ date }) => {
 				),
 			)
 		}
-
-		// navigation.navigate('ConfirmAppointmentScreen', {
-		// 	headerTime: `${roundTimes[0]}, ${dateFns.format(
-		// 		selectedDay,
-		// 		'dd MMM',
-		// 	)}`,
-		// 	roundTimes,
-		// 	day: dateFns.format(selectedDay, 'dd MMM'),
-		// })
 	}
 
 	return (
@@ -379,7 +371,12 @@ const Days = ({ date }) => {
 	)
 }
 
-const CalendarV2 = () => {
+const CalendarV2 = ({
+	selectedDay,
+	setSelectedDay,
+	selectedTimeSlots,
+	setSelectedTimeSlots,
+}) => {
 	const [currentDate, setCurrentDate] = useState(new Date())
 
 	const onNextMonth = () => {
@@ -399,7 +396,13 @@ const CalendarV2 = () => {
 			/>
 			<DayNames date={currentDate} />
 
-			<Days date={currentDate} />
+			<Days
+				date={currentDate}
+				selectedDay={selectedDay}
+				setSelectedDay={setSelectedDay}
+				selectedTimeSlots={selectedTimeSlots}
+				setSelectedTimeSlots={setSelectedTimeSlots}
+			/>
 		</View>
 	)
 }

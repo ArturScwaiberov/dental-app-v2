@@ -19,14 +19,49 @@ import { TextInputMask } from 'react-native-masked-input'
 
 import ModalPicker from '../src/components/ModalPicker'
 import { appointmentsApi, patientsApi } from '../utils'
+import * as dateFns from 'date-fns'
+
+const getJsDate = (date,time) => dateFns.parse(time, 'HH:mm:ss', new Date(date));
+
+const isRoomAvailable = (room,forTime,appointments) => {
+  const foundAppointment = appointments.find(a=>a.clinicSectionId===room.id);
+  if(foundAppointment){
+    /**Checking time overlapping  */
+    
+    const startDate1 = getJsDate(forTime.date,forTime.startTime)
+    const endDate1 = getJsDate(forTime.date,forTime.endTime)
+    console.log(`forTime.startTime`, forTime.startTime);
+    console.log(`forTime.endTime`, forTime.endTime);
+
+
+    const startDate2 = getJsDate(foundAppointment.date,foundAppointment.startTime)
+    const endDate2 = getJsDate(foundAppointment.date,foundAppointment.endTime)
+
+    console.log(`foundAppointment.startTime`, foundAppointment.startTime);
+    console.log(`foundAppointment.endTime`, foundAppointment.endTime);
+
+    const checkStart = dateFns.compareAsc(startDate2,startDate1);
+    console.log(`checkStart`, checkStart);
+
+    const checkEnd = dateFns.compareAsc(endDate1,endDate2);
+    console.log(`checkEnd`, checkEnd);
+
+  }
+
+  return true;
+}
 
 const ConfirmAppointmentScreen = ({ navigation, route }) => {
+  console.log(`route.params`, route.params);
+  const {date,startTime,endTime} = route.params;
+  const [appointments, setAppointments] = React.useState([])
+
   const [error, setError] = React.useState('')
   const [active, setActive] = React.useState('first')
   const [loading, setLoading] = React.useState(false)
   const token = useSelector((state) => state.auth.token)
   const { patients } = useSelector((state) => state.patients)
-  const sectionsList = useSelector((state) => state.common.sections).sort(function (a, b) {
+  const sectionsList = useSelector((state) => state.common.sections).filter(section=>isRoomAvailable(section,{date,startTime,endTime},appointments)).sort(function (a, b) {
     if (a.name > b.name) {
       return 1
     }
@@ -60,6 +95,12 @@ const ConfirmAppointmentScreen = ({ navigation, route }) => {
   const [selectedUser, setSelectedUser] = React.useState('')
   const [selectedSection, setSelectedSection] = React.useState('')
 
+  React.useEffect(()=>{
+    appointmentsApi.getAll(token,date,date).then(({data})=>{
+      setAppointments(data);
+    }).catch(err=>setError(`Error getting appointments for ${date}`))
+  },[]);
+
   const selectSectionHandler = (item) => {
     setSelectedSection(item)
   }
@@ -82,9 +123,9 @@ const ConfirmAppointmentScreen = ({ navigation, route }) => {
         patientId: selectedPatient,
         clinicSectionId: selectedSection,
         note: note,
-        date: '2021-04-18',
-        startTime: '16:45:00',
-        endTime: '18:00:00',
+        date,
+        startTime,
+        endTime,
       }
       appointmentsApi
         .add(token, data, selectedPatient)
@@ -259,9 +300,9 @@ const ConfirmAppointmentScreen = ({ navigation, route }) => {
         assignedCustomerId: selectedUser,
         clinicSectionId: selectedSection,
         note: note,
-        date: '2021-04-22',
-        startTime: '02:15:00',
-        endTime: '03:15:00',
+        date,
+        startTime,
+        endTime,
       }
 
       await appointmentsApi
@@ -467,9 +508,9 @@ const ConfirmAppointmentScreen = ({ navigation, route }) => {
       const data = {
         clinicSectionId: selectedSection,
         note: note,
-        date: '2021-04-28',
-        startTime: '10:15:00',
-        endTime: '12:00:00',
+        date,
+        startTime,
+        endTime,
       }
       appointmentsApi
         .addNoPatient(token, data)

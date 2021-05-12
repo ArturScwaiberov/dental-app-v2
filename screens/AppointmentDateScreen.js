@@ -1,14 +1,16 @@
-import React from 'react'
-import { ActivityIndicator, View } from 'react-native'
+import React,{useState} from 'react'
+import { ActivityIndicator, TouchableOpacity, View } from 'react-native'
 import { Container, Content, Icon, Spinner } from 'native-base'
 import { endOfMonth, format, startOfMonth } from 'date-fns'
 import { useDispatch, useSelector } from 'react-redux'
+import * as dateFns from 'date-fns'
 
 import { patientsApi } from '../utils'
 import CalendarV2 from '../src/components/CalendarV2'
 import NewCalendar from '../src/components/NewCalendar'
 import * as commonActions from '../store/actions/common'
 import * as patientsActions from '../store/actions/patients'
+
 
 const AppointmentDateScreen = ({ navigation, route }) => {
   const [refreshing, setRefreshing] = React.useState(false)
@@ -17,6 +19,10 @@ const AppointmentDateScreen = ({ navigation, route }) => {
   const sections = useSelector((state) => state.common.sections)
   const users = useSelector((state) => state.common.users)
   const clinic = useSelector((state) => state.common.clinic)
+
+  const [selectedDay, setSelectedDay] = useState(null)
+  const [selectedTimeSlots, setSelectedTimeSlots] = useState([])
+
   /* const date = new Date('April 17, 2021 03:24:00') */
   const date = new Date()
   const startMonth = format(startOfMonth(date), 'yyyy-MM-dd')
@@ -73,34 +79,63 @@ const AppointmentDateScreen = ({ navigation, route }) => {
     }
   }, [])
 
+  const goToConfirmScreen = () => {
+    const startsAt = selectedTimeSlots[selectedTimeSlots.length-1].cDate;
+    const startTime = dateFns.format(startsAt,'HH:mm:ss');
+    const endTime = dateFns.format(dateFns.addMinutes(startsAt,selectedTimeSlots.length * 15),'HH:mm:ss')
+
+    navigation.navigate('ConfirmAppointmentScreen', {
+			headerTime: `${dateFns.format(startsAt,'HH:mm')} - ${dateFns.format(dateFns.addMinutes(startsAt,selectedTimeSlots.length * 15),'HH:mm')}, ${dateFns.format(
+				selectedDay,
+				'dd MMM',
+			)}`,
+			date: dateFns.format(selectedDay, 'YYY-MM-dd'),
+      startTime,
+      endTime
+		})
+  }
+
   return (
     <Container>
       <Content style={safe}>
         {refreshing ? (
           <Spinner color='blue' size='large' color='#2A86FF' />
         ) : (
-          <CalendarV2 />
+          <CalendarV2 
+            selectedDay={selectedDay}
+            setSelectedDay={setSelectedDay}
+            selectedTimeSlots={selectedTimeSlots}
+            setSelectedTimeSlots={setSelectedTimeSlots}
+          />
         )}
       </Content>
-      <View
-				style={{
-					position: 'absolute',
-					bottom: 50,
-					right: 50,
-					width: 50,
-					height: 50,
-					borderRadius: 25,
-					backgroundColor: '#2A86FF',
-					justifyContent: 'center',
-					alignItems: 'center',
-				}}
-			>
-				<Icon
-					name='arrow-right-thick'
-					type='MaterialCommunityIcons'
-					style={{ color: 'white' }}
-				/>
-			</View>
+      
+      {
+        selectedTimeSlots.length ? <TouchableOpacity
+        style={{
+          position: 'absolute',
+          bottom: 50,
+          right: 50,
+          width: 50,
+          height: 50,
+          borderRadius: 25,
+          backgroundColor: '#2A86FF',
+          justifyContent: 'center',
+          alignItems: 'center',
+          elevation: 100
+        }}
+
+        onPress={goToConfirmScreen}
+      >
+        
+        <Icon
+          name='arrow-right-thick'
+          type='MaterialCommunityIcons'
+          style={{ color: 'white' }}
+        />
+      </TouchableOpacity> : null
+      }
+      
     </Container>
   )
 }
