@@ -1,5 +1,4 @@
 import * as dateFns from 'date-fns'
-import ruLocale from 'date-fns/locale/ru'
 import { Spinner } from 'native-base'
 import React, { useState } from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -10,6 +9,8 @@ import { appointmentsApi } from '../../utils/api'
 const WEEK_STARTS_ON_MONDAY = {
 	weekStartsOn: 1,
 }
+
+const SLOT_INTERVAL = 15 // in minutes
 
 const CalendarHeader = ({ date, onNextMonth, onPreviousMonth }) => {
 	const thisMonth = dateFns.format(date, 'LLLL')
@@ -139,19 +140,20 @@ const Days = ({
 		try {
 			const { data } = await appointmentsApi.getFreeSlots(token, {
 				day: selectedDayFormated,
-				interval: 15,
+				interval: SLOT_INTERVAL,
 			})
-			console.log('freeSlots:', data)
 
 			setFreeSlots(
-				data
-					.filter((s, i) => i < 37)
-					.map((s) => ({
-						...s,
-						cDate: dateFns.parse(s.time, 'HH:mm', new Date(s.date)),
-					}))
-					.sort((a, b) => dateFns.compareAsc(a.cDate, b.cDate))
-					.filter((s) => dateFns.isFuture(s.cDate)),
+				Object.keys(data)
+					.map((key) => {
+						const startAt = dateFns.parseISO(key)
+						return {
+							startAt,
+							...data[key],
+						}
+					})
+					.filter((s) => dateFns.isFuture(s.startAt))
+					.sort((a, b) => dateFns.compareAsc(a.startAt, b.startAt)),
 			)
 		} catch (error) {
 			console.log('error', error)
@@ -159,9 +161,10 @@ const Days = ({
 
 		setIsLoadingTimeSlots(false)
 	}
+
 	const roundTimePressHandler = (slot) => () => {
-		const slotIndex = selectedTimeSlots.findIndex(
-			(s) => s.time === slot.time,
+		const slotIndex = selectedTimeSlots.findIndex((s) =>
+			dateFns.isEqual(s.startAt, slot.startAt),
 		)
 
 		if (slotIndex >= 0) {
@@ -169,7 +172,7 @@ const Days = ({
 		} else {
 			setSelectedTimeSlots((slots) =>
 				[...slots, slot].sort((a, b) =>
-					dateFns.compareAsc(a.cDate, b.cDate),
+					dateFns.compareAsc(a.startAt, b.startAt),
 				),
 			)
 		}
@@ -266,8 +269,11 @@ const Days = ({
 									<RoundsRowHolderTimes>
 										{freeSlots.map((s, i) => {
 											const isSelected =
-												selectedTimeSlots.find(
-													(t) => t.time === s.time,
+												selectedTimeSlots.find((t) =>
+													dateFns.isEqual(
+														s.startAt,
+														t.startAt,
+													),
 												)
 
 											const isDisabled =
@@ -276,20 +282,20 @@ const Days = ({
 														? false
 														: Math.abs(
 																dateFns.differenceInMinutes(
-																	s.cDate,
+																	s.startAt,
 																	selectedTimeSlots[0]
-																		.cDate,
+																		.startAt,
 																),
-														  ) === 15 ||
+														  ) === SLOT_INTERVAL ||
 														  Math.abs(
 																dateFns.differenceInMinutes(
-																	s.cDate,
+																	s.startAt,
 																	selectedTimeSlots[
 																		selectedTimeSlots.length -
 																			1
-																	].cDate,
+																	].startAt,
 																),
-														  ) === 15
+														  ) === SLOT_INTERVAL
 														? false
 														: true
 													: false
@@ -326,17 +332,8 @@ const Days = ({
 														]}
 													>
 														{dateFns.format(
-															dateFns.parse(
-																s.time,
-																'HH:mm',
-																new Date(
-																	selectedDay,
-																),
-															),
+															s.startAt,
 															'HH:mm',
-															{
-																locale: ruLocale,
-															},
 														)}
 													</H5Active>
 												</RoundTime>

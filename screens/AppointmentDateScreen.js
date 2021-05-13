@@ -79,19 +79,29 @@ const AppointmentDateScreen = ({ navigation, route }) => {
     }
   }, [])
 
+  console.log(`selectedTimeSlots`, selectedTimeSlots);
+  
   const goToConfirmScreen = () => {
-    const startsAt = selectedTimeSlots[selectedTimeSlots.length-1].cDate;
-    const startTime = dateFns.format(startsAt,'HH:mm:ss');
-    const endTime = dateFns.format(dateFns.addMinutes(startsAt,selectedTimeSlots.length * 15),'HH:mm:ss')
+    const startAt = selectedTimeSlots[0].startAt;
+    const startTime = dateFns.format(startAt,'HH:mm:ss');
+    const endTime = dateFns.format(dateFns.addMinutes(startAt,selectedTimeSlots.length * 15),'HH:mm:ss')
+
+    const clinics = selectedTimeSlots.map(s=>s.clinicSectionIds)
+    const customers = selectedTimeSlots.map(s=>s.customerIds)
+    
+    const clinicSectionIds = clinics.reduce((a,b)=>a.filter(c=>b.includes(c)))
+    const customerIds = customers.reduce((a,b)=>a.filter(c=>b.includes(c)))
 
     navigation.navigate('ConfirmAppointmentScreen', {
-			headerTime: `${dateFns.format(startsAt,'HH:mm')} - ${dateFns.format(dateFns.addMinutes(startsAt,selectedTimeSlots.length * 15),'HH:mm')}, ${dateFns.format(
+			headerTime: `${dateFns.format(startAt,'HH:mm')} - ${dateFns.format(dateFns.addMinutes(startAt,selectedTimeSlots.length * 15),'HH:mm')}, ${dateFns.format(
 				selectedDay,
 				'dd MMM',
 			)}`,
 			date: dateFns.format(selectedDay, 'YYY-MM-dd'),
       startTime,
-      endTime
+      endTime,
+      clinicSectionIds,
+      customerIds
 		})
   }
 
