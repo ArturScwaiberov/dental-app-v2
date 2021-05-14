@@ -49,16 +49,6 @@ const AuthLoadingScreen = (props) => {
     }
   }
 
-  const signOut = async () => {
-    try {
-      await dispatch(authAction.logout())
-    } catch (err) {
-      console.log(err)
-    }
-
-    setUserToken(null)
-  }
-
   let view = ''
 
   if (loading) {
@@ -66,7 +56,7 @@ const AuthLoadingScreen = (props) => {
   } else if (!userToken) {
     view = <AuthNavigator />
   } else {
-    view = <AppNavigator signOut={signOut} />
+    view = <AppNavigator />
   }
 
   return <NavigationContainer>{view}</NavigationContainer>

@@ -198,7 +198,7 @@ function Patients({ route, navigation }) {
   )
 }
 
-function Settings({ route, navigation, signOut }) {
+function Settings({ route, navigation }) {
   return (
     <Stack.Navigator initialRouteName='Settings'>
       <Stack.Screen
@@ -208,13 +208,12 @@ function Settings({ route, navigation, signOut }) {
           title: 'Настройки',
           ...navOptionsNoBackButton,
         }}
-        signOut={signOut}
       />
     </Stack.Navigator>
   )
 }
 
-function Home({ navigation, signOut }) {
+function Home({ navigation }) {
   return (
     <Tab.Navigator
       tabBarOptions={{
@@ -258,7 +257,6 @@ function Home({ navigation, signOut }) {
           tabBarLabel: 'Настройки',
           tabBarIcon: ({ color }) => <Icon name='cog' type='Entypo' style={{ color: color }} />,
         }}
-        signOut={signOut}
       />
     </Tab.Navigator>
   )
