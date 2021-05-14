@@ -6,12 +6,11 @@ export const GET_PATIENTS = 'GET_PATIENTS'
 export const getPatients = (token) => {
   return async (dispatch) => {
     try {
-      const response = await axios.get(`/patients`, {
+      const {data} = await axios.get(`/patients`, {
         headers: { authorization: token },
       })
 
-      const respData = await response.json()
-      const respDataArray = respData[0]
+      const respDataArray = data[0]
 
       const loadedPatients = []
       for (const key in respDataArray) {
@@ -29,7 +28,7 @@ export const getPatients = (token) => {
           )
         )
       }
-
+      
       dispatch({ type: GET_PATIENTS, patients: loadedPatients })
     } catch (err) {
       console.log('ERROR getting patients: ', err)
