@@ -20,10 +20,11 @@ export const loginCurrent = (cb) => {
           refreshToken: refreshToken.token,
         })
 
-        cb && cb()
+        cb && cb(true)
       })
     } catch (err) {
       console.log('ERROR auto sign in:', err)
+      cb && cb(false)
     }
   }
 }

@@ -20,7 +20,12 @@ const AuthLoadingScreen = (props) => {
       setUserToken(token)
       setLoading(false)
     } else {
-      loadApp(()=>setLoading(false))
+      loadApp((loggedIn)=>{
+        if(!loggedIn){
+          setUserToken(null)
+        }
+        setLoading(false)
+      })
     }
   }, [token])
 

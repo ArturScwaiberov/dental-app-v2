@@ -1,7 +1,9 @@
 import React from 'react'
 import { Button, Icon, Text, Container, Content, View } from 'native-base'
 import { ActivityIndicator, Linking } from 'react-native'
-import { useSelector } from 'react-redux'
+import { useSelector,useDispatch } from 'react-redux'
+
+import * as authAction from '../store/actions/auth'
 
 const HoursList = ({ hours }) => {
   const hoursArr = []
@@ -76,14 +78,18 @@ const UsersList = ({ clinicUsers }) => {
   })
 }
 
-function LogoutScreen({ signOut }) {
+function LogoutScreen() {
   const common = useSelector((state) => state.common)
   const clinicHours = common.clinic.operatingHours
   const clinicName = common.clinic.name
   const clinicPhone = common.clinic.phone
   const clinicUsers = common.users
   const clinicSections = common.sections
+  const dispatch = useDispatch()
 
+  const signOut = () => {
+    dispatch(authAction.logout())
+  }
   return (
     <Container style={{}}>
       {clinicHours && clinicPhone ? (
