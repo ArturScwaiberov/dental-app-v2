@@ -18,10 +18,10 @@ const AuthLoadingScreen = (props) => {
     setLoading(true)
     if (token) {
       setUserToken(token)
+      setLoading(false)
     } else {
-      loadApp()
+      loadApp(()=>setLoading(false))
     }
-    setLoading(false)
   }, [token])
 
   //можно это вырубить после того как будет подключен AsyncStorage
@@ -36,9 +36,9 @@ const AuthLoadingScreen = (props) => {
     setLoading(false)
   } */
 
-  const loadApp = async () => {
+  const loadApp = async (cb) => {
     try {
-      await dispatch(authAction.loginCurrent())
+      await dispatch(authAction.loginCurrent(cb))
     } catch (err) {
       console.log(err)
     }
@@ -57,7 +57,7 @@ const AuthLoadingScreen = (props) => {
   let view = ''
 
   if (loading) {
-    view = <ActivityIndicator style={{ paddingTop: 20 }} size='large' color='#2A86FF' />
+    view = <ActivityIndicator style={{ paddingTop: 100 }} size='large' color='#2A86FF' />
   } else if (!userToken) {
     view = <AuthNavigator />
   } else {

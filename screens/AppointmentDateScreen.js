@@ -13,7 +13,7 @@ import * as patientsActions from '../store/actions/patients'
 
 
 const AppointmentDateScreen = ({ navigation, route }) => {
-  const [refreshing, setRefreshing] = React.useState(false)
+  const [refreshing, setRefreshing] = React.useState(true)
   const [data, setData] = React.useState([])
   const token = useSelector((state) => state.auth.token)
   const sections = useSelector((state) => state.common.sections)

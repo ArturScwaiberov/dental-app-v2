@@ -2,7 +2,7 @@ import Auth from '@aws-amplify/auth'
 export const SIGNIN = 'SIGNIN'
 export const SIGNOUT = 'SIGNOUT'
 
-export const loginCurrent = () => {
+export const loginCurrent = (cb) => {
   return async (dispatch) => {
     try {
       const user = await Auth.currentSession()
@@ -19,6 +19,8 @@ export const loginCurrent = () => {
           customerId: idToken.payload.sub,
           refreshToken: refreshToken.token,
         })
+
+        cb && cb()
       })
     } catch (err) {
       console.log('ERROR auto sign in:', err)
