@@ -79,7 +79,7 @@ const AppointmentDateScreen = ({ navigation, route }) => {
     }
   }, [])
 
-  console.log(`selectedTimeSlots`, selectedTimeSlots);
+  // console.log(`selectedTimeSlots`, selectedTimeSlots);
   
   const goToConfirmScreen = () => {
     const startAt = selectedTimeSlots[0].startAt;
