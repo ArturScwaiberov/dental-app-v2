@@ -80,6 +80,7 @@ const ConfirmAppointmentScreen = ({ navigation, route }) => {
 
     const submitHandler = () => {
       setError('')
+      setLoading(true)
       const data = {
         assignedCustomerId: selectedUser,
         patientId: selectedPatient,
@@ -97,6 +98,7 @@ const ConfirmAppointmentScreen = ({ navigation, route }) => {
         .catch((err) => {
           setError('ERROR after sending appointment (existing patient)')
         })
+        .finally(()=>setLoading(false))
     }
 
     if (loading) {
@@ -248,16 +250,16 @@ const ConfirmAppointmentScreen = ({ navigation, route }) => {
         const { data } = await patientsApi.add(token, values)
         if (data.error === 'BAD_REQUEST') {
           setError('Please enter valid data')
+          setLoading(false)
         } else {
           submitAppointmentHandler(data.id)
         }
-      } finally {
+      } catch (error) {
         setLoading(false)
       }
     }
 
     const submitAppointmentHandler = async (incomingPatientId) => {
-      setLoading(true)
       const appointmentData = {
         assignedCustomerId: selectedUser,
         clinicSectionId: selectedSection,
@@ -466,7 +468,7 @@ const ConfirmAppointmentScreen = ({ navigation, route }) => {
     const [note, setNote] = React.useState('')
 
     const submitHandler = () => {
-      setError('')
+      setLoading(true)
       const data = {
         clinicSectionId: selectedSection,
         note: note,
@@ -482,6 +484,7 @@ const ConfirmAppointmentScreen = ({ navigation, route }) => {
         .catch((err) => {
           setError('ERROR after sending appointment (no patient)')
         })
+        .finally(()=>setLoading(false))
     }
 
     if (loading) {
