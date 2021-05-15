@@ -231,6 +231,14 @@ function Home({ navigation }) {
             <Icon name='calendar' type='Entypo' style={{ color: color }} />
           ),
         }}
+        listeners={({navigation})=>(
+          {
+            tabPress: e => {
+              e.preventDefault()
+              navigation.navigate('AppointmentDateScreen')
+            }
+          }
+        )}
       />
       <Tab.Screen
         name='AppointmentsListTab'
