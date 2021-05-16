@@ -20,7 +20,7 @@ const AppointmentDateScreen = ({ navigation, route }) => {
   const users = useSelector((state) => state.common.users)
   const clinic = useSelector((state) => state.common.clinic)
 
-  const [selectedDay, setSelectedDay] = useState(null)
+  const [selectedDay, setSelectedDay] = useState(new Date())
   const [selectedTimeSlots, setSelectedTimeSlots] = useState([])
 
   /* const date = new Date('April 17, 2021 03:24:00') */

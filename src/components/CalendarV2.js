@@ -1,7 +1,7 @@
 import * as dateFns from 'date-fns'
 import { Spinner } from 'native-base'
 import React, { useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components/native'
 import { appointmentsApi } from '../../utils/api'
@@ -124,6 +124,13 @@ const Days = ({
 		weeksInMonth.push(week)
 		dayCounter = dateFns.addDays(dayCounter, 7)
 	}
+
+	React.useEffect(() => {
+		const weekInMonthIndex = weeksInMonth.findIndex((week) =>
+			week.some((day) => dateFns.isSameDay(day, selectedDay)),
+		)
+		onDayPress(weekInMonthIndex, selectedDay)()
+	}, [])
 
 	const onDayPress = (weekInMonthIndex, selectedDay) => async () => {
 		if (isLoadingTimeSlots) {
@@ -267,63 +274,56 @@ const Days = ({
 										Выберите удобное время
 									</H5>
 									<RoundsRowHolderTimes>
-										{freeSlots.map((s, i) => {
-											const isSelected =
-												selectedTimeSlots.find((t) =>
-													dateFns.isEqual(
-														s.startAt,
-														t.startAt,
-													),
-												)
+										{freeSlots.length ? (
+											freeSlots.map((s, i) => {
+												const isSelected =
+													selectedTimeSlots.find(
+														(t) =>
+															dateFns.isEqual(
+																s.startAt,
+																t.startAt,
+															),
+													)
 
-											const isDisabled =
-												selectedTimeSlots.length
-													? isSelected
-														? false
-														: Math.abs(
-																dateFns.differenceInMinutes(
-																	s.startAt,
-																	selectedTimeSlots[0]
-																		.startAt,
-																),
-														  ) === SLOT_INTERVAL ||
-														  Math.abs(
-																dateFns.differenceInMinutes(
-																	s.startAt,
-																	selectedTimeSlots[
-																		selectedTimeSlots.length -
-																			1
-																	].startAt,
-																),
-														  ) === SLOT_INTERVAL
-														? false
-														: true
-													: false
+												const isDisabled =
+													selectedTimeSlots.length
+														? isSelected
+															? false
+															: Math.abs(
+																	dateFns.differenceInMinutes(
+																		s.startAt,
+																		selectedTimeSlots[0]
+																			.startAt,
+																	),
+															  ) ===
+																	SLOT_INTERVAL ||
+															  Math.abs(
+																	dateFns.differenceInMinutes(
+																		s.startAt,
+																		selectedTimeSlots[
+																			selectedTimeSlots.length -
+																				1
+																		]
+																			.startAt,
+																	),
+															  ) ===
+																	SLOT_INTERVAL
+															? false
+															: true
+														: false
 
-											return (
-												<RoundTime
-													onPress={roundTimePressHandler(
-														s,
-													)}
-													disabled={isDisabled}
-													key={i}
-													style={[
-														isSelected
-															? {
-																	backgroundColor:
-																		'#08cf4a',
-															  }
-															: null,
-														isDisabled
-															? styles.disabled
-															: null,
-													]}
-												>
-													<H5Active
+												return (
+													<RoundTime
+														onPress={roundTimePressHandler(
+															s,
+														)}
+														disabled={isDisabled}
+														key={i}
 														style={[
 															isSelected
 																? {
-																		color: '#fff',
+																		backgroundColor:
+																			'#08cf4a',
 																  }
 																: null,
 															isDisabled
@@ -331,14 +331,32 @@ const Days = ({
 																: null,
 														]}
 													>
-														{dateFns.format(
-															s.startAt,
-															'HH:mm',
-														)}
-													</H5Active>
-												</RoundTime>
-											)
-										})}
+														<H5Active
+															style={[
+																isSelected
+																	? {
+																			color: '#fff',
+																	  }
+																	: null,
+																isDisabled
+																	? styles.disabled
+																	: null,
+															]}
+														>
+															{dateFns.format(
+																s.startAt,
+																'HH:mm',
+															)}
+														</H5Active>
+													</RoundTime>
+												)
+											})
+										) : (
+											<Text>
+												Time for appointment not
+												available!
+											</Text>
+										)}
 									</RoundsRowHolderTimes>
 								</RoundsHolderTimes>
 							)}
