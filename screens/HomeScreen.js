@@ -1,6 +1,6 @@
 import React from 'react'
 import { useFocusEffect, useScrollToTop } from '@react-navigation/native'
-import { SectionList, RefreshControl } from 'react-native'
+import { SectionList, RefreshControl, BackHandler } from 'react-native'
 import styled from 'styled-components/native'
 import { useSelector } from 'react-redux'
 
@@ -8,11 +8,19 @@ import { appointmentsApi } from '../utils/api'
 import { Appointment, SectionTitle } from '../src/components'
 import { addMonths, format } from 'date-fns'
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
   const [data, setData] = React.useState([])
   const [refreshing, setRefreshing] = React.useState(false)
   const token = useSelector((state) => state.auth.token)
   const ref = React.useRef(null)
+
+  React.useEffect(()=>{
+    const backAction = () => navigation.navigate('AppointmentsCalendarTab')
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress',backAction)
+
+    return ()=>backHandler.remove()
+  },[])
 
   useFocusEffect(
     React.useCallback(() => {
