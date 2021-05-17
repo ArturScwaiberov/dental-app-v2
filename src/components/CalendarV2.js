@@ -2,8 +2,9 @@ import * as dateFns from 'date-fns'
 import { Spinner } from 'native-base'
 import React, { useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components/native'
+import * as calendarActions from '../../store/actions/calendar'
 import { appointmentsApi } from '../../utils/api'
 
 const WEEK_STARTS_ON_MONDAY = {
@@ -95,19 +96,24 @@ const DayNames = ({ date }) => {
 	)
 }
 
-const Days = ({
-	date,
-	selectedDay,
-	setSelectedDay,
-	selectedTimeSlots,
-	setSelectedTimeSlots,
-}) => {
+const Days = ({ date }) => {
 	const [weekInMonthIndex, setWeekInMonthIndex] = useState(null)
 	const [isLoadingTimeSlots, setIsLoadingTimeSlots] = useState(false)
 	const [freeSlots, setFreeSlots] = useState([])
 	const [showTimeSlots, setShowTimeSlots] = useState(false)
 
 	const token = useSelector((state) => state.auth.token)
+	const selectedDay = useSelector((state) => state.calendar.selectedDay)
+	const selectedTimeSlots = useSelector(
+		(state) => state.calendar.selectedTimeSlots,
+	)
+	const dispatch = useDispatch()
+
+	const setSelectedDay = (day) =>
+		dispatch(calendarActions.setSelectedDay(day))
+	const setSelectedTimeSlots = (timeSlots) =>
+		dispatch(calendarActions.setSelectedTimeSlots(timeSlots))
+
 	// console.log(`token`, token)
 
 	const monthStart = dateFns.startOfMonth(date)
@@ -187,10 +193,10 @@ const Days = ({
 		)
 
 		if (slotIndex >= 0) {
-			setSelectedTimeSlots((slots) => slots.slice(0, slotIndex))
+			setSelectedTimeSlots(selectedTimeSlots.slice(0, slotIndex))
 		} else {
-			setSelectedTimeSlots((slots) =>
-				[...slots, slot].sort((a, b) =>
+			setSelectedTimeSlots(
+				[...selectedTimeSlots, slot].sort((a, b) =>
 					dateFns.compareAsc(a.startAt, b.startAt),
 				),
 			)
@@ -399,12 +405,7 @@ const Days = ({
 	)
 }
 
-const CalendarV2 = ({
-	selectedDay,
-	setSelectedDay,
-	selectedTimeSlots,
-	setSelectedTimeSlots,
-}) => {
+const CalendarV2 = () => {
 	const [currentDate, setCurrentDate] = useState(new Date())
 
 	const onNextMonth = () => {
@@ -424,13 +425,7 @@ const CalendarV2 = ({
 			/>
 			<DayNames date={currentDate} />
 
-			<Days
-				date={currentDate}
-				selectedDay={selectedDay}
-				setSelectedDay={setSelectedDay}
-				selectedTimeSlots={selectedTimeSlots}
-				setSelectedTimeSlots={setSelectedTimeSlots}
-			/>
+			<Days date={currentDate} />
 		</View>
 	)
 }

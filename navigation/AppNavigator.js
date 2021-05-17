@@ -2,6 +2,8 @@ import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { useSelector } from 'react-redux'
+import * as dateFns from 'date-fns'
 
 import {
   HomeScreen,
@@ -16,7 +18,8 @@ import {
   ConfirmAppointmentScreen,
   LogoutScreen,
 } from '../screens'
-import { Button, Icon } from 'native-base'
+import { Button, Icon, View } from 'native-base'
+import { TouchableOpacity } from 'react-native'
 
 const Tab = createBottomTabNavigator()
 const Stack = createStackNavigator()
@@ -64,6 +67,33 @@ const navOptionsBackButton = {
 }
 
 function AppointmentCalendar({ route, navigation }) {
+  const selectedDay = useSelector((state) => state.calendar.selectedDay)
+  const selectedTimeSlots = useSelector((state) => state.calendar.selectedTimeSlots)
+
+  const goToConfirmScreen = () => {
+    const startAt = selectedTimeSlots[0].startAt;
+    const startTime = dateFns.format(startAt,'HH:mm:ss');
+    const endTime = dateFns.format(dateFns.addMinutes(startAt,selectedTimeSlots.length * 15),'HH:mm:ss')
+
+    const clinics = selectedTimeSlots.map(s=>s.clinicSectionIds)
+    const customers = selectedTimeSlots.map(s=>s.customerIds)
+    
+    const clinicSectionIds = clinics.reduce((a,b)=>a.filter(c=>b.includes(c)))
+    const customerIds = customers.reduce((a,b)=>a.filter(c=>b.includes(c)))
+
+    navigation.navigate('ConfirmAppointmentScreen', {
+			headerTime: `${dateFns.format(startAt,'HH:mm')} - ${dateFns.format(dateFns.addMinutes(startAt,selectedTimeSlots.length * 15),'HH:mm')}, ${dateFns.format(
+				selectedDay,
+				'dd MMM',
+			)}`,
+			date: dateFns.format(selectedDay, 'YYY-MM-dd'),
+      startTime,
+      endTime,
+      clinicSectionIds,
+      customerIds
+		})
+  }
+
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -72,6 +102,27 @@ function AppointmentCalendar({ route, navigation }) {
         options={{
           title: 'Запись на прием',
           ...navOptionsNoBackButton,
+          headerLeft: () => selectedTimeSlots.length ? <View style={{width:40}}/> : null,
+          headerRight: ()=>selectedTimeSlots.length ? <TouchableOpacity
+          style={{
+            right: 20,
+            width: 40,
+            height: 40,
+            borderRadius: 25,
+            backgroundColor: '#2A86FF',
+            justifyContent: 'center',
+            alignItems: 'center',
+            elevation: 100
+          }}
+          onPress={goToConfirmScreen}
+        >
+          
+          <Icon
+            name='arrow-right-thick'
+            type='MaterialCommunityIcons'
+            style={{ color: '#fff' }}
+          />
+        </TouchableOpacity>: null
         }}
       />
       <Stack.Screen

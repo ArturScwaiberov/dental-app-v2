@@ -20,9 +20,6 @@ const AppointmentDateScreen = ({ navigation, route }) => {
   const users = useSelector((state) => state.common.users)
   const clinic = useSelector((state) => state.common.clinic)
 
-  const [selectedDay, setSelectedDay] = useState(new Date())
-  const [selectedTimeSlots, setSelectedTimeSlots] = useState([])
-
   /* const date = new Date('April 17, 2021 03:24:00') */
   const date = new Date()
   const startMonth = format(startOfMonth(date), 'yyyy-MM-dd')
@@ -80,30 +77,6 @@ const AppointmentDateScreen = ({ navigation, route }) => {
   }, [])
 
   // console.log(`selectedTimeSlots`, selectedTimeSlots);
-  
-  const goToConfirmScreen = () => {
-    const startAt = selectedTimeSlots[0].startAt;
-    const startTime = dateFns.format(startAt,'HH:mm:ss');
-    const endTime = dateFns.format(dateFns.addMinutes(startAt,selectedTimeSlots.length * 15),'HH:mm:ss')
-
-    const clinics = selectedTimeSlots.map(s=>s.clinicSectionIds)
-    const customers = selectedTimeSlots.map(s=>s.customerIds)
-    
-    const clinicSectionIds = clinics.reduce((a,b)=>a.filter(c=>b.includes(c)))
-    const customerIds = customers.reduce((a,b)=>a.filter(c=>b.includes(c)))
-
-    navigation.navigate('ConfirmAppointmentScreen', {
-			headerTime: `${dateFns.format(startAt,'HH:mm')} - ${dateFns.format(dateFns.addMinutes(startAt,selectedTimeSlots.length * 15),'HH:mm')}, ${dateFns.format(
-				selectedDay,
-				'dd MMM',
-			)}`,
-			date: dateFns.format(selectedDay, 'YYY-MM-dd'),
-      startTime,
-      endTime,
-      clinicSectionIds,
-      customerIds
-		})
-  }
 
   return (
     <Container>
@@ -111,28 +84,23 @@ const AppointmentDateScreen = ({ navigation, route }) => {
         {refreshing ? (
           <Spinner color='blue' size='large' color='#2A86FF' />
         ) : (
-          <CalendarV2 
-            selectedDay={selectedDay}
-            setSelectedDay={setSelectedDay}
-            selectedTimeSlots={selectedTimeSlots}
-            setSelectedTimeSlots={setSelectedTimeSlots}
-          />
+          <CalendarV2 />
         )}
       </Content>
       
-      {
+      {/* {
         selectedTimeSlots.length ? <TouchableOpacity
         style={{
           position: 'absolute',
-          bottom: 50,
-          right: 50,
+          top: -30,
+          right: 10,
           width: 50,
           height: 50,
           borderRadius: 25,
           backgroundColor: '#2A86FF',
           justifyContent: 'center',
           alignItems: 'center',
-          elevation: 100
+          elevation: 10000
         }}
 
         onPress={goToConfirmScreen}
@@ -144,7 +112,7 @@ const AppointmentDateScreen = ({ navigation, route }) => {
           style={{ color: 'white' }}
         />
       </TouchableOpacity> : null
-      }
+      } */}
       
     </Container>
   )

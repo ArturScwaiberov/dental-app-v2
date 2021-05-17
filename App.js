@@ -11,6 +11,7 @@ import AppNavigation from './navigation'
 import authReducer from './store/reducers/auth'
 import commonReducer from './store/reducers/common'
 import patientsReducer from './store/reducers/patients'
+import calendarReducer from './store/reducers/calendar'
 
 Amplify.configure(config)
 
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   common: commonReducer,
   patients: patientsReducer,
+  calendar: calendarReducer
 })
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk))
