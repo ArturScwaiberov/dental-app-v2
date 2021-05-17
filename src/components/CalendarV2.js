@@ -105,6 +105,7 @@ const Days = ({
 	const [weekInMonthIndex, setWeekInMonthIndex] = useState(null)
 	const [isLoadingTimeSlots, setIsLoadingTimeSlots] = useState(false)
 	const [freeSlots, setFreeSlots] = useState([])
+	const [showTimeSlots, setShowTimeSlots] = useState(false)
 
 	const token = useSelector((state) => state.auth.token)
 	// console.log(`token`, token)
@@ -129,10 +130,11 @@ const Days = ({
 		const weekInMonthIndex = weeksInMonth.findIndex((week) =>
 			week.some((day) => dateFns.isSameDay(day, selectedDay)),
 		)
-		onDayPress(weekInMonthIndex, selectedDay)()
+		setShowTimeSlots(true)
+		onDayPress(weekInMonthIndex, selectedDay)
 	}, [])
 
-	const onDayPress = (weekInMonthIndex, selectedDay) => async () => {
+	const onDayPress = async (weekInMonthIndex, selectedDay) => {
 		if (isLoadingTimeSlots) {
 			return
 		}
@@ -167,6 +169,16 @@ const Days = ({
 		}
 
 		setIsLoadingTimeSlots(false)
+	}
+
+	const toggleHandler = (i, day) => () => {
+		if (dateFns.isSameDay(selectedDay, day) && showTimeSlots) {
+			setShowTimeSlots(false)
+			setSelectedTimeSlots([])
+		} else {
+			setShowTimeSlots(true)
+			onDayPress(i, day)
+		}
 	}
 
 	const roundTimePressHandler = (slot) => () => {
@@ -227,7 +239,7 @@ const Days = ({
 									}}
 								>
 									<DayButton
-										onPress={onDayPress(i, day)}
+										onPress={toggleHandler(i, day)}
 										disabled={isDisabledDay}
 										style={[
 											isDisabledDay
@@ -252,7 +264,8 @@ const Days = ({
 							)
 						})}
 					</View>
-					{weekInMonthIndex === i &&
+					{showTimeSlots &&
+					weekInMonthIndex === i &&
 					week.some((weekDay) =>
 						dateFns.isSameMonth(selectedDay, weekDay),
 					) ? (
