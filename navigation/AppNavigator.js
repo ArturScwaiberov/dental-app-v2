@@ -16,7 +16,7 @@ import {
   ConfirmAppointmentScreen,
   LogoutScreen,
 } from '../screens'
-import { Button, Icon, View } from 'native-base'
+import { Button, Icon, View,Text } from 'native-base'
 import { TouchableOpacity } from 'react-native'
 
 const Tab = createBottomTabNavigator()
@@ -156,6 +156,9 @@ function AppointmentsList({ route, navigation }) {
         options={{
           title: 'Карта пациента',
           ...navOptionsBackButton,
+          headerLeft: ({tintColor,...rest}) => {
+            return <TouchableOpacity {...rest} style={{flexDirection: 'row', alignItems: 'center'}}><Icon name="arrow-back" style={{color: tintColor, marginLeft:10, marginRight: 10}}/><Text style={{color:tintColor}}>Back</Text></TouchableOpacity>
+          }
         }}
       />
 
