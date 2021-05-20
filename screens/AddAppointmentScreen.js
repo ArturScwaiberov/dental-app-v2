@@ -1,23 +1,20 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Keyboard, Platform, Alert } from 'react-native'
 import { Container, Content, Form, Item, Input, Label, Icon, Text, Button } from 'native-base'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import styled from 'styled-components/native'
 
 import { appointmentsApi } from '../utils'
-import { useSelector } from 'react-redux'
 
 const AddAppointmentScreen = ({ route, navigation }) => {
-  const [values, setValues] = useState({
+  const [values, setValues] = React.useState({
     patientId: route.params?.patientId ?? '',
   })
-  const [date, setDate] = useState(new Date())
-  const [time, setTime] = useState(new Date())
-  const [mode, setMode] = useState('date')
-  const [show, setShow] = useState(false)
-  const [timeShow, setTimeShow] = useState(false)
-  const token = useSelector((state) => state.auth.token)
-  console.log('token', token)
+  const [date, setDate] = React.useState(new Date())
+  const [time, setTime] = React.useState(new Date())
+  const [mode, setMode] = React.useState('date')
+  const [show, setShow] = React.useState(false)
+  const [timeShow, setTimeShow] = React.useState(false)
 
   const setFieldValue = (name, value) => {
     setValues({
@@ -39,17 +36,6 @@ const AddAppointmentScreen = ({ route, navigation }) => {
     time: 'время',
   }
 
-  const fields = {
-    patientId: 'ac449c4a-75a1-40c6-b3f7-2184b98d1ae6',
-    assignedCustomerId: 'c6955e1d-ed84-4509-95f5-b6a2329e95e7',
-    assignedCustomerId2: 'c6955e1d-ed84-4509-95f5-b6a2329e95e7',
-    clinicSectionId: '74542329-8ded-4f59-afeb-3c6f9f58177a',
-    note: '',
-    date: '2021-03-09',
-    startTime: '00:45:00',
-    endTime: '01:00:00',
-  }
-
   const submitHandler = () => {
     appointmentsApi
       .add(values)
@@ -66,7 +52,6 @@ const AddAppointmentScreen = ({ route, navigation }) => {
           })
         }
       })
-    /* alert(JSON.stringify(values)) */
   }
 
   const formatDate = (date) => {
@@ -90,9 +75,6 @@ const AddAppointmentScreen = ({ route, navigation }) => {
     const currentDate = selectedDate || date
     const dateLocal = formatDate(currentDate)
     const timeLocal = formatTime(currentDate)
-    console.log('event.type', event.type)
-    console.log('dateLocal', dateLocal)
-    console.log('timeLocal', timeLocal)
     setDate(currentDate)
     setValues({
       ...values,
@@ -134,7 +116,7 @@ const AddAppointmentScreen = ({ route, navigation }) => {
     <Container>
       <Content style={{ paddingLeft: 20, paddingRight: 20 }}>
         <Form>
-          <Item picker /* floatingLabel */>
+          <Item picker>
             <Input
               onChange={handleChange.bind(this, 'dentNumber')}
               value={values.dentNumber}

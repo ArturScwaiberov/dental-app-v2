@@ -16,7 +16,6 @@ const Appointment = ({ item, index }) => {
   const pressHandler = () => {
     currentPatient && item.data.patientId
       ? navigation.navigate('Patient', {
-          item: currentPatient.id,
           patientId: item.data.patientId,
         })
       : null

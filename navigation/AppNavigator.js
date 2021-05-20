@@ -10,9 +10,7 @@ import {
   PatientScreen,
   AddPatientScreen,
   PatientsListScreen,
-  AddAppointmentScreen,
   EditPatientScreen,
-  EditAppointmentScreen,
   ToothFormulaScreen,
   AppointmentDateScreen,
   ConfirmAppointmentScreen,
@@ -63,7 +61,7 @@ const navOptionsBackButton = {
     fontWeight: 'bold',
     fontSize: 20,
   },
-  headerBackTitleVisible: false,
+  headerBackTitleVisible: true,
 }
 
 function AppointmentCalendar({ route, navigation }) {
@@ -71,27 +69,30 @@ function AppointmentCalendar({ route, navigation }) {
   const selectedTimeSlots = useSelector((state) => state.calendar.selectedTimeSlots)
 
   const goToConfirmScreen = () => {
-    const startAt = selectedTimeSlots[0].startAt;
-    const startTime = dateFns.format(startAt,'HH:mm:ss');
-    const endTime = dateFns.format(dateFns.addMinutes(startAt,selectedTimeSlots.length * 15),'HH:mm:ss')
+    const startAt = selectedTimeSlots[0].startAt
+    const startTime = dateFns.format(startAt, 'HH:mm:ss')
+    const endTime = dateFns.format(
+      dateFns.addMinutes(startAt, selectedTimeSlots.length * 15),
+      'HH:mm:ss'
+    )
 
-    const clinics = selectedTimeSlots.map(s=>s.clinicSectionIds)
-    const customers = selectedTimeSlots.map(s=>s.customerIds)
-    
-    const clinicSectionIds = clinics.reduce((a,b)=>a.filter(c=>b.includes(c)))
-    const customerIds = customers.reduce((a,b)=>a.filter(c=>b.includes(c)))
+    const clinics = selectedTimeSlots.map((s) => s.clinicSectionIds)
+    const customers = selectedTimeSlots.map((s) => s.customerIds)
+
+    const clinicSectionIds = clinics.reduce((a, b) => a.filter((c) => b.includes(c)))
+    const customerIds = customers.reduce((a, b) => a.filter((c) => b.includes(c)))
 
     navigation.navigate('ConfirmAppointmentScreen', {
-			headerTime: `${dateFns.format(startAt,'HH:mm')} - ${dateFns.format(dateFns.addMinutes(startAt,selectedTimeSlots.length * 15),'HH:mm')}, ${dateFns.format(
-				selectedDay,
-				'dd MMM',
-			)}`,
-			date: dateFns.format(selectedDay, 'YYY-MM-dd'),
+      headerTime: `${dateFns.format(startAt, 'HH:mm')} - ${dateFns.format(
+        dateFns.addMinutes(startAt, selectedTimeSlots.length * 15),
+        'HH:mm'
+      )}, ${dateFns.format(selectedDay, 'dd MMM')}`,
+      date: dateFns.format(selectedDay, 'YYY-MM-dd'),
       startTime,
       endTime,
       clinicSectionIds,
-      customerIds
-		})
+      customerIds,
+    })
   }
 
   return (
@@ -100,29 +101,31 @@ function AppointmentCalendar({ route, navigation }) {
         name='AppointmentDateScreen'
         component={AppointmentDateScreen}
         options={{
-          title: 'Запись на прием',
+          title: 'Create Appointment',
           ...navOptionsNoBackButton,
-          headerLeft: () => selectedTimeSlots.length ? <View style={{width:40}}/> : null,
-          headerRight: ()=>selectedTimeSlots.length ? <TouchableOpacity
-          style={{
-            right: 20,
-            width: 40,
-            height: 40,
-            borderRadius: 25,
-            backgroundColor: '#2A86FF',
-            justifyContent: 'center',
-            alignItems: 'center',
-            elevation: 100
-          }}
-          onPress={goToConfirmScreen}
-        >
-          
-          <Icon
-            name='arrow-right-thick'
-            type='MaterialCommunityIcons'
-            style={{ color: '#fff' }}
-          />
-        </TouchableOpacity>: null
+          headerLeft: () => (selectedTimeSlots.length ? <View style={{ width: 40 }} /> : null),
+          headerRight: () =>
+            selectedTimeSlots.length ? (
+              <TouchableOpacity
+                style={{
+                  right: 20,
+                  width: 40,
+                  height: 40,
+                  borderRadius: 25,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                onPress={goToConfirmScreen}
+              >
+                <Icon
+                  name='ios-checkmark-done-sharp'
+                  type='Ionicons'
+                  style={{
+                    color: '#84D269',
+                  }}
+                />
+              </TouchableOpacity>
+            ) : null,
         }}
       />
       <Stack.Screen
@@ -175,7 +178,7 @@ function Patients({ route, navigation }) {
         name='PatientsList'
         component={PatientsListScreen}
         options={{
-          title: 'Пациенты',
+          title: 'Patients List',
           headerTintColor: '#2A86FF',
           headerTitleAlign: 'left',
           headerTitleStyle: {
@@ -208,13 +211,7 @@ function Patients({ route, navigation }) {
         component={ToothFormulaScreen}
         options={{
           title: 'Формула зубов',
-          headerTintColor: '#2A86FF',
-          headerTitleAlign: 'center',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 20,
-          },
-          headerBackTitleVisible: false,
+          ...navOptionsBackButton,
         }}
       />
       <Stack.Screen
@@ -222,13 +219,7 @@ function Patients({ route, navigation }) {
         component={AddPatientScreen}
         options={{
           title: 'Добавить пациента',
-          headerTintColor: '#2A86FF',
-          headerTitleAlign: 'center',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 20,
-          },
-          headerBackTitleVisible: false,
+          ...navOptionsBackButton,
         }}
       />
       <Stack.Screen
@@ -236,13 +227,7 @@ function Patients({ route, navigation }) {
         component={EditPatientScreen}
         options={{
           title: 'Редактировать пацента',
-          headerTintColor: '#2A86FF',
-          headerTitleAlign: 'center',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 20,
-          },
-          headerBackTitleVisible: false,
+          ...navOptionsBackButton,
         }}
       />
     </Stack.Navigator>
@@ -256,7 +241,7 @@ function Settings({ route, navigation }) {
         name='Settings'
         component={LogoutScreen}
         options={{
-          title: 'Настройки',
+          title: 'About clinic',
           ...navOptionsNoBackButton,
         }}
       />
@@ -270,7 +255,7 @@ function Home({ navigation }) {
       tabBarOptions={{
         inactiveTintColor: '#ccc',
         activeTintColor: '#2A86FF',
-        /* showLabel: false, */
+        showLabel: false,
       }}
     >
       <Tab.Screen
@@ -282,14 +267,12 @@ function Home({ navigation }) {
             <Icon name='calendar' type='Entypo' style={{ color: color }} />
           ),
         }}
-        listeners={({navigation})=>(
-          {
-            tabPress: e => {
-              e.preventDefault()
-              navigation.navigate('AppointmentDateScreen')
-            }
-          }
-        )}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault()
+            navigation.navigate('AppointmentDateScreen')
+          },
+        })}
       />
       <Tab.Screen
         name='AppointmentsListTab'

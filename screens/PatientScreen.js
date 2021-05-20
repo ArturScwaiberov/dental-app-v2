@@ -8,13 +8,18 @@ import { GrayText, Button, Badge } from '../src/components'
 import { appointmentsApi, patientsApi } from '../utils'
 
 const PatientScreen = ({ route, navigation }) => {
-  const { item, patientId } = route.params
+  const { patientId } = route.params
   const [appointments, setAppointments] = useState([])
   const [currentPatient, setCurrentPatient] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [animatedValue, setAnimatedValue] = useState(new Animated.Value(0))
   const AnimatedGrayText = Animated.createAnimatedComponent(GrayText)
   const token = useSelector((state) => state.auth.token)
+  const common = useSelector((state) => state.common)
+  const isRefreshing = useSelector((state) => state.patients.loading)
+  const clinicUsers = common.users
+  const clinicSections = common.sections
+  const [error, setError] = React.useState('')
 
   const fetchPatientsAppointments = async () => {
     await appointmentsApi
@@ -23,36 +28,25 @@ const PatientScreen = ({ route, navigation }) => {
         setAppointments(data)
       })
       .catch((error) => {
-        console.log('Error', error.message)
+        setError('Error: ' + error.message)
       })
   }
 
   const fetchAll = async () => {
-    /* try {
-      const { appData } = await appointmentsApi.get(token, patientId)
-      setAppointments(appData)
-      const { patData } = await patientsApi.getPatient(token, patientId)
-      setCurrentPatient(patData)
-    } catch (error) {
-      console.log('Error', error.message)
-    } finally {
-      setIsLoading(false)
-    } */
-
     await appointmentsApi
       .get(token, patientId)
       .then(({ data }) => {
         setAppointments(data)
       })
       .catch((error) => {
-        console.log('Error', error.message)
+        setError('Error: ' + error.message)
       })
 
     await patientsApi
       .getPatient(token, patientId)
       .then(({ data }) => setCurrentPatient(data))
       .catch((error) => {
-        console.log('Error', error.message)
+        setError('Error: ' + error.message)
       })
       .finally(() => {
         setIsLoading(false)
@@ -88,15 +82,18 @@ const PatientScreen = ({ route, navigation }) => {
     return <ActivityIndicator style={{ paddingTop: 20 }} size='large' color='#2A86FF' />
   }
 
+  if (error) {
+    return <Text style={label}>{error}</Text>
+  }
+
   return (
     <Container>
       <Animated.FlatList
         data={appointments ? appointments : null}
-        scrollEventThrottle={16} // <-- Use 1 here to make sure no events are ever missed
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: animatedValue } } }],
-          { useNativeDriver: true } // <-- Add this
-        )}
+        scrollEventThrottle={16}
+        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: animatedValue } } }], {
+          useNativeDriver: true,
+        })}
         style={{
           paddingHorizontal: 20,
         }}
@@ -132,14 +129,47 @@ const PatientScreen = ({ route, navigation }) => {
                 color='#A3A3A3'
               />
               <AppointmentCardLabel>
-                Duration:{' '}
+                Duration:
                 <Bold>
                   {item.startTime.slice(0, 5)} - {item.endTime.slice(0, 5)}
                 </Bold>
               </AppointmentCardLabel>
             </AppointmentCardRow>
 
-            {item.note && (
+            {!!item.assignedCustomerId && (
+              <AppointmentCardRow>
+                <Ionicons
+                  style={{ marginRight: 7 }}
+                  name='ios-person-circle-outline'
+                  size={20}
+                  color='#A3A3A3'
+                />
+                <AppointmentCardLabel>
+                  Doctor:{' '}
+                  <Bold>
+                    {clinicUsers
+                      .filter((user) => user.id === item.assignedCustomerId)
+                      .map((user) => user.fullName)}
+                  </Bold>
+                </AppointmentCardLabel>
+              </AppointmentCardRow>
+            )}
+
+            {!!item.clinicSectionId && (
+              <AppointmentCardRow>
+                <Ionicons style={{ marginRight: 7 }} name='ios-enter' size={20} color='#A3A3A3' />
+                <AppointmentCardLabel>
+                  Room:{' '}
+                  <Bold>
+                    {clinicSections
+                      .filter((section) => section.id === item.clinicSectionId)
+                      .map((section) => section.name)}
+                  </Bold>
+                </AppointmentCardLabel>
+              </AppointmentCardRow>
+            )}
+
+            {!!item.note && (
               <AppointmentCardRow>
                 <Ionicons style={{ marginRight: 7 }} name='md-document' size={20} color='#A3A3A3' />
                 <AppointmentCardLabel>
@@ -148,7 +178,7 @@ const PatientScreen = ({ route, navigation }) => {
               </AppointmentCardRow>
             )}
 
-            {item.status && (
+            {!!item.status && (
               <AppointmentCardRow>
                 <ButtonsWrapper style={{ flex: 1 }}>
                   <Badge color='green' style={{ fontWeight: 'bold' }}>
@@ -243,8 +273,8 @@ const AppointmentCard = styled.View({
   borderRadius: 10,
   paddingTop: 14,
   paddingBottom: 14,
-  paddingLeft: 20,
-  paddingRight: 20,
+  paddingLeft: 15,
+  paddingRight: 15,
   marginBottom: 20,
 })
 
@@ -274,5 +304,13 @@ const CallButton = styled.TouchableOpacity({
   backgroundColor: '#84D269',
   marginLeft: 10,
 })
+
+const label = {
+  marginTop: 20,
+  fontSize: 16,
+  color: '#484848',
+  textAlign: 'center',
+  fontFamily: 'Roboto',
+}
 
 export default PatientScreen

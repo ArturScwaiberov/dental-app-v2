@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, ActivityIndicator } from 'react-native'
+import { StyleSheet, ActivityIndicator, Text } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -7,12 +7,12 @@ import AuthNavigator from './AuthNavigator'
 import AppNavigator from './AppNavigator'
 import * as authAction from '../store/actions/auth'
 
-const AuthLoadingScreen = (props) => {
+const AuthLoadingScreen = () => {
   const [userToken, setUserToken] = React.useState(null)
   const [loading, setLoading] = React.useState(false)
+  const [error, setError] = React.useState('')
   const token = useSelector((state) => state.auth.token)
   const dispatch = useDispatch()
-  /* console.log('token____', token) */
 
   React.useEffect(() => {
     setLoading(true)
@@ -20,8 +20,8 @@ const AuthLoadingScreen = (props) => {
       setUserToken(token)
       setLoading(false)
     } else {
-      loadApp((loggedIn)=>{
-        if(!loggedIn){
+      loadApp((loggedIn) => {
+        if (!loggedIn) {
           setUserToken(null)
         }
         setLoading(false)
@@ -29,23 +29,11 @@ const AuthLoadingScreen = (props) => {
     }
   }, [token])
 
-  //можно это вырубить после того как будет подключен AsyncStorage
-  /* const loadAppFast = async () => {
-    await Auth.currentAuthenticatedUser()
-      .then((user) => {
-        setUserToken(user.signInUserSession.accessToken.jwtToken)
-      })
-      .catch((err) => {
-        console.log('ERROR sign in:', err)
-      })
-    setLoading(false)
-  } */
-
   const loadApp = async (cb) => {
     try {
       await dispatch(authAction.loginCurrent(cb))
     } catch (err) {
-      console.log(err)
+      setError(err)
     }
   }
 
@@ -59,6 +47,10 @@ const AuthLoadingScreen = (props) => {
     view = <AppNavigator />
   }
 
+  if (error.length > 0) {
+    return <Text style={styles.label}>{error}</Text>
+  }
+
   return <NavigationContainer>{view}</NavigationContainer>
 }
 
@@ -68,6 +60,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  label: {
+    marginTop: 20,
+    fontSize: 16,
+    color: '#484848',
+    textAlign: 'center',
+    fontFamily: 'Roboto',
   },
 })
 

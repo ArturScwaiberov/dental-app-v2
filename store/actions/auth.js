@@ -5,9 +5,6 @@ export const SIGNOUT = 'SIGNOUT'
 export const loginCurrent = (cb) => {
   return async (dispatch) => {
     try {
-      const user = await Auth.currentSession()
-      const token = (await Auth.currentSession()).getIdToken().getJwtToken()
-
       const cognitoUser = await Auth.currentAuthenticatedUser()
       const currentSession = await Auth.currentSession()
       cognitoUser.refreshSession(currentSession.refreshToken, (err, session) => {
@@ -23,8 +20,8 @@ export const loginCurrent = (cb) => {
         cb && cb(true)
       })
     } catch (err) {
-      console.log('ERROR auto sign in:', err)
       cb && cb(false)
+      throw new Error(err)
     }
   }
 }
@@ -40,12 +37,12 @@ export const login = (email, password) => {
         customerId: user.signInUserSession.idToken.payload.sub,
       })
     } catch (err) {
-      if (err.code === 'NotAuthorizedException') {
+      if (err.code === 'NotAuthorizedException' || err.code === 'NotAuthorizedException') {
         throw new Error('Incorrect username or password.')
       } else if (err.code === 'NetworkError') {
         throw new Error('Network Error')
       }
-      console.log('ERROR sign in:', err)
+      throw new Error(err)
     }
   }
 }
@@ -59,7 +56,7 @@ export const logout = () => {
         type: SIGNOUT,
       })
     } catch (err) {
-      console.log('ERROR sign out: ', err)
+      throw new Error(err)
     }
   }
 }

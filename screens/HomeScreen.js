@@ -8,19 +8,20 @@ import { appointmentsApi } from '../utils/api'
 import { Appointment, SectionTitle } from '../src/components'
 import { addMonths, format } from 'date-fns'
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ({ navigation }) => {
   const [data, setData] = React.useState([])
   const [refreshing, setRefreshing] = React.useState(false)
   const token = useSelector((state) => state.auth.token)
   const ref = React.useRef(null)
+  const [error, setError] = React.useState('')
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     const backAction = () => navigation.navigate('AppointmentsCalendarTab')
 
-    const backHandler = BackHandler.addEventListener('hardwareBackPress',backAction)
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction)
 
-    return ()=>backHandler.remove()
-  },[])
+    return () => backHandler.remove()
+  }, [])
 
   useFocusEffect(
     React.useCallback(() => {
@@ -74,7 +75,7 @@ const HomeScreen = ({navigation}) => {
         setData(groupArr(data))
       })
       .catch((error) => {
-        console.log('Error', error.message)
+        setError('Error: ' + error.message)
       })
       .finally((resp) => {
         setRefreshing(false)
@@ -94,6 +95,10 @@ const HomeScreen = ({navigation}) => {
         <ActionText style={{ color: '#816CFF' }}>Нет запланированных приемов.. 💁‍♀️</ActionText>
       )
     )
+  }
+
+  if (error) {
+    return <Text style={label}>{error}</Text>
   }
 
   return (
@@ -126,5 +131,13 @@ const ActionText = styled.Text({
   backgroundColor: 'transparent',
   padding: 10,
 })
+
+const label = {
+  marginTop: 20,
+  fontSize: 16,
+  color: '#484848',
+  textAlign: 'center',
+  fontFamily: 'Roboto',
+}
 
 export default HomeScreen

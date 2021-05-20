@@ -1,3 +1,4 @@
+import axios from '../../core/axios'
 import Clinic from '../../models/clinic'
 import Section from '../../models/section'
 import User from '../../models/user'
@@ -8,15 +9,11 @@ export const DROP_COMMON = 'DROP_COMMON'
 export const getCommon = (token) => {
   return async (dispatch) => {
     try {
-      const response = await fetch(
-        `https://cpfxbicmq4.execute-api.us-east-1.amazonaws.com/prod/v1/common`,
-        {
-          method: 'GET',
-          headers: { authorization: token },
-        }
-      )
+      const { data } = await axios.get(`/common`, {
+        headers: { authorization: token },
+      })
 
-      const respData = await response.json()
+      const respData = data
 
       const loadedSections = []
       for (const key in respData.sections) {
@@ -59,7 +56,7 @@ export const getCommon = (token) => {
         users: loadedUsers,
       })
     } catch (err) {
-      console.log('ERROR after getting common: ', err)
+      throw new Error(err)
     }
   }
 }

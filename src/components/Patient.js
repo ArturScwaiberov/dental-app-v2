@@ -13,13 +13,10 @@ const Patient = ({ navigation, item }) => {
     age = differenceInYears(new Date(), new Date(item.person.birthday))
   }
 
-  /* console.log('patientId', item.person.id + ' - ' + item.person.fullName) */
-
   return (
     <GroupItem
       onPress={() =>
         navigation.navigate('Patient', {
-          item: item,
           patientId: item.id,
         })
       }

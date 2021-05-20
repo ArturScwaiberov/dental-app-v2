@@ -2,11 +2,7 @@
   "expo": {
     "name": "dental-app",
     "slug": "dental-app",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
+    "scheme": "dental-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -18,11 +14,19 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.ashvaiberov.dental",
+      "buildNumber": "1.0.0",
+      "supportsTablet": false,
+      "config": {
+        "usesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.ashvaiberov.dental",
+      "versionCode": 0,
+      "permissions": []
     }
   }
 }

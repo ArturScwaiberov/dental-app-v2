@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import { ActivityIndicator, ScrollView } from 'react-native'
 import styled from 'styled-components'
 
-import { proceduresApi } from '../utils/api'
+import { proceduresApi } from '../utils'
 import { format } from 'date-fns'
 
 const ToothFormulaScreen = ({ route, navigation }) => {
@@ -16,6 +16,7 @@ const ToothFormulaScreen = ({ route, navigation }) => {
   const [blue, setBlue] = React.useState(['#2A86FF'])
   const [num, setNum] = React.useState([])
   const [desc, setDesc] = React.useState([])
+  const [error, setError] = React.useState('')
   const pressHandler = (key, element) => {
     setNum(key)
     setBlue('rgba(42,134,255, 0.7)')
@@ -29,11 +30,10 @@ const ToothFormulaScreen = ({ route, navigation }) => {
     proceduresApi
       .get(token, userId)
       .then(({ data }) => {
-        /* console.log('DATA__________', data) */
         setProcedures(data)
       })
       .catch((err) => {
-        console.log('Error', err)
+        setError('Error: ' + err)
       })
       .finally(() => {
         setIsLoading(false)
@@ -276,6 +276,10 @@ const ToothFormulaScreen = ({ route, navigation }) => {
 </svg>
 `
 
+  if (error) {
+    return <Text style={label}>{error}</Text>
+  }
+
   return (
     <Container>
       <ScrollView style={{ paddingHorizontal: 20 }}>
@@ -309,5 +313,13 @@ const ButtonsWrapper = styled.View({
   flexWrap: 'wrap',
   justifyContent: 'center',
 })
+
+const label = {
+  marginTop: 20,
+  fontSize: 16,
+  color: '#484848',
+  textAlign: 'center',
+  fontFamily: 'Roboto',
+}
 
 export default ToothFormulaScreen

@@ -13,7 +13,7 @@ import {
   Spinner,
 } from 'native-base'
 import styled from 'styled-components/native'
-import { Alert, StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native'
 import { useDispatch } from 'react-redux'
 
 import * as authAction from '../store/actions/auth'
@@ -41,7 +41,7 @@ const LoginScreen = ({ navigation }) => {
     try {
       await dispatch(authAction.login(values.email, values.password))
     } catch (err) {
-      Alert.alert('Error', err.message)
+      setErrorMessage(err.message)
     }
     setLoading(false)
   }

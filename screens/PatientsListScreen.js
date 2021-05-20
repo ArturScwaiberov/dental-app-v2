@@ -15,8 +15,8 @@ const PatientsListScreen = ({ navigation }) => {
   const [animatedValue, setAnimatedValue] = React.useState(new Animated.Value(0))
   const ref = React.useRef(null)
   const token = useSelector((state) => state.auth.token)
-  /* console.log('data', data) */
-  const patients = useSelector((state) => state.patients)
+
+  const [error, setError] = React.useState('')
 
   useFocusEffect(
     React.useCallback(() => {
@@ -34,7 +34,7 @@ const PatientsListScreen = ({ navigation }) => {
         setData(tempArr[0])
       })
       .catch((error) => {
-        console.log('Error', error)
+        setError('Error: ' + error)
       })
       .finally(() => {
         setRefreshing(false)
@@ -68,6 +68,10 @@ const PatientsListScreen = ({ navigation }) => {
     )
   }
 
+  if (error) {
+    return <Text style={label}>{error}</Text>
+  }
+
   return (
     <Container>
       <Animated.FlatList
@@ -75,11 +79,10 @@ const PatientsListScreen = ({ navigation }) => {
         ref={ref}
         style={{}}
         contentContainerStyle={{ flexGrow: 1 }}
-        scrollEventThrottle={16} // <-- Use 1 here to make sure no events are ever missed
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: animatedValue } } }],
-          { useNativeDriver: true } // <-- Add this
-        )}
+        scrollEventThrottle={16}
+        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: animatedValue } } }], {
+          useNativeDriver: true,
+        })}
         data={
           data
             ? data.filter(
@@ -128,5 +131,13 @@ const ActionText = styled.Text({
   backgroundColor: 'transparent',
   padding: 10,
 })
+
+const label = {
+  marginTop: 20,
+  fontSize: 16,
+  color: '#484848',
+  textAlign: 'center',
+  fontFamily: 'Roboto',
+}
 
 export default PatientsListScreen

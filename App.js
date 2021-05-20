@@ -19,7 +19,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   common: commonReducer,
   patients: patientsReducer,
-  calendar: calendarReducer
+  calendar: calendarReducer,
 })
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk))
@@ -39,7 +39,7 @@ export default function App() {
       <AppLoading
         startAsync={fetchFonts}
         onFinish={() => setIsReady(true)}
-        onError={(err) => console.log(err)}
+        onError={(err) => console.warn(err)}
       />
     )
   }
