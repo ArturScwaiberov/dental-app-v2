@@ -37,7 +37,7 @@ export const login = (email, password) => {
         customerId: user.signInUserSession.idToken.payload.sub,
       })
     } catch (err) {
-      if (err.code === 'NotAuthorizedException' || err.code === 'NotAuthorizedException') {
+      if (err.code === 'NotAuthorizedException' || err.code === 'UserNotFoundException') {
         throw new Error('Incorrect username or password.')
       } else if (err.code === 'NetworkError') {
         throw new Error('Network Error')

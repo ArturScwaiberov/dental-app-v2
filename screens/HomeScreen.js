@@ -1,6 +1,6 @@
 import React from 'react'
 import { useFocusEffect, useScrollToTop } from '@react-navigation/native'
-import { SectionList, RefreshControl, BackHandler } from 'react-native'
+import { SectionList, RefreshControl, BackHandler, Text } from 'react-native'
 import styled from 'styled-components/native'
 import { useSelector } from 'react-redux'
 
@@ -92,7 +92,7 @@ const HomeScreen = ({ navigation }) => {
   const listEmptyComponent = () => {
     return (
       refreshing === false && (
-        <ActionText style={{ color: '#816CFF' }}>Нет запланированных приемов.. 💁‍♀️</ActionText>
+        <ActionText style={{ color: '#816CFF' }}>There is no appointments yet.. 💁‍♀️</ActionText>
       )
     )
   }

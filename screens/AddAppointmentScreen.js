@@ -48,7 +48,7 @@ const AddAppointmentScreen = ({ route, navigation }) => {
           e.response.data.message.forEach((err) => {
             const fieldErr = err.msg
             const fieldName = err.param
-            Alert.alert(`Поле ${fieldsName[fieldName]}`, fieldErr)
+            Alert.alert(`Field ${fieldsName[fieldName]}`, fieldErr)
           })
         }
       })
@@ -130,7 +130,7 @@ const AddAppointmentScreen = ({ route, navigation }) => {
               onChange={handleChange.bind(this, 'diagnosis')}
               value={values.diagnosis}
               clearButtonMode='while-editing'
-              placeholder='* Диагноз'
+              placeholder='* Diagnosis'
             />
           </Item>
           <Item picker>
@@ -139,7 +139,7 @@ const AddAppointmentScreen = ({ route, navigation }) => {
               value={values.description}
               multiline
               clearButtonMode='while-editing'
-              placeholder='Подробное описание или заметка'
+              placeholder='Description or note'
               style={{ paddingTop: 15, paddingBottom: 15 }}
             />
           </Item>
@@ -149,7 +149,7 @@ const AddAppointmentScreen = ({ route, navigation }) => {
               value={values.price}
               keyboardType='number-pad'
               clearButtonMode='while-editing'
-              placeholder='* Цена'
+              placeholder='* Price'
             />
           </Item>
 

@@ -1,9 +1,10 @@
-import * as dateFns from 'date-fns'
-import { Spinner } from 'native-base'
 import React, { useState } from 'react'
+import { Spinner } from 'native-base'
 import { StyleSheet, Text, View } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components/native'
+import * as dateFns from 'date-fns'
+
 import * as calendarActions from '../../store/actions/calendar'
 import { appointmentsApi } from '../../utils/api'
 
@@ -246,14 +247,17 @@ const Days = ({ date }) => {
                 <Spinner color='blue' size='large' color='#2A86FF' />
               ) : (
                 <RoundsHolderTimes>
-                  <H5
-                    style={{
-                      alignSelf: 'center',
-                      margin: 5,
-                    }}
-                  >
-                    Выберите удобное время
-                  </H5>
+                  {freeSlots.length > 0 && (
+                    <H5
+                      style={{
+                        alignSelf: 'center',
+                        margin: 5,
+                        textAlign: 'center',
+                      }}
+                    >
+                      Choose appointment time
+                    </H5>
+                  )}
                   <RoundsRowHolderTimes>
                     {freeSlots.length ? (
                       freeSlots.map((s, i) => {
@@ -307,7 +311,7 @@ const Days = ({ date }) => {
                         )
                       })
                     ) : (
-                      <Text>Time for appointment not available!</Text>
+                      <H5>No available time for this day!</H5>
                     )}
                   </RoundsRowHolderTimes>
                 </RoundsHolderTimes>
@@ -320,18 +324,15 @@ const Days = ({ date }) => {
       <RoundsHolder>
         <RoundsRowHolder>
           <RoundClosed />
-          <H5>Не рабочий день</H5>
-          {/* Not a working day */}
-        </RoundsRowHolder>
-        <RoundsRowHolder>
-          <RoundNoApp />
-          <H5>Рабочий день, записи нет</H5>
-          {/* Working Day, No entry */}
+          <H5>Day off</H5>
         </RoundsRowHolder>
         <RoundsRowHolder>
           <RoundApp />
-          <H5>Рабочий день, запись есть</H5>
-          {/* Working Day, there is a record. */}
+          <H5>Working day, times available</H5>
+        </RoundsRowHolder>
+        <RoundsRowHolder>
+          <RoundNoApp />
+          <H5>Working day, times not available</H5>
         </RoundsRowHolder>
       </RoundsHolder>
     </View>
@@ -439,7 +440,7 @@ const RoundNoApp = styled.View({
   height: 13,
   width: 13,
   borderRadius: 13,
-  backgroundColor: '#ecf0d8',
+  backgroundColor: '#ff695e',
   marginRight: 7,
 })
 
@@ -447,7 +448,7 @@ const RoundApp = styled.View({
   height: 13,
   width: 13,
   borderRadius: 13,
-  backgroundColor: '#ff695e',
+  backgroundColor: '#ecf0d8',
   marginRight: 7,
 })
 

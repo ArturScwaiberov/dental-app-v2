@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components/native'
 import { useFocusEffect, useScrollToTop } from '@react-navigation/native'
-import { Animated, RefreshControl, Alert } from 'react-native'
+import { Animated, Button, RefreshControl, Text, View } from 'react-native'
 import { Header, Item, Input, Icon } from 'native-base'
 
 import { patientsApi } from '../utils'
@@ -31,10 +31,20 @@ const PatientsListScreen = ({ navigation }) => {
       .get(token)
       .then(({ data }) => {
         const tempArr = Array.from(data)
-        setData(tempArr[0])
+        setData(
+          tempArr[0].sort(function (a, b) {
+            if (a.person.fullName.toLowerCase() > b.person.fullName.toLowerCase()) {
+              return 1
+            }
+            if (a.person.fullName.toLowerCase() < b.person.fullName.toLowerCase()) {
+              return -1
+            }
+            return 0
+          })
+        )
       })
       .catch((error) => {
-        setError('Error: ' + error)
+        setError(error)
       })
       .finally(() => {
         setRefreshing(false)
@@ -59,17 +69,16 @@ const PatientsListScreen = ({ navigation }) => {
   })
 
   const listEmptyComponent = () => {
-    return (
-      refreshing === false && (
-        <ActionText style={{ color: '#816CFF', padding: 0 }}>
-          Ни одного пациента не найдено... 💁‍♀️
-        </ActionText>
-      )
-    )
+    return refreshing === false && <ActionText>No patients were found... 💁‍♀️</ActionText>
   }
 
   if (error) {
-    return <Text style={label}>{error}</Text>
+    return (
+      <View>
+        <Text style={label}>{error}</Text>
+        <Button title='Reload' onPress={() => cleanFetch()} />
+      </View>
+    )
   }
 
   return (
@@ -106,7 +115,7 @@ const PatientsListScreen = ({ navigation }) => {
               <Item style={{ height: 36, borderRadius: 10, backgroundColor: '#eee' }}>
                 <Icon name='ios-search' />
                 <Input
-                  placeholder='Поиск...'
+                  placeholder='Search...'
                   clearButtonMode='always'
                   value={searchValue}
                   onChange={(text) => onSearch(text)}
@@ -126,10 +135,11 @@ const Container = styled.SafeAreaView({
 })
 
 const ActionText = styled.Text({
-  color: 'white',
+  color: '#816CFF',
+  padding: 0,
   fontSize: 16,
   backgroundColor: 'transparent',
-  padding: 10,
+  textAlign: 'center',
 })
 
 const label = {

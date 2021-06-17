@@ -2,6 +2,7 @@ import axios from '../../core/axios'
 import Clinic from '../../models/clinic'
 import Section from '../../models/section'
 import User from '../../models/user'
+import Procedure from '../../models/procedure'
 
 export const GET_COMMON = 'GET_COMMON'
 export const DROP_COMMON = 'DROP_COMMON'
@@ -14,6 +15,7 @@ export const getCommon = (token) => {
       })
 
       const respData = data
+      console.log('respData', respData)
 
       const loadedSections = []
       for (const key in respData.sections) {
@@ -41,6 +43,19 @@ export const getCommon = (token) => {
         )
       }
 
+      const loadedProcedures = []
+      for (const key in respData.procedures) {
+        loadedProcedures.push(
+          new Procedure(
+            respData.procedures[key].id,
+            respData.procedures[key].categoryIndex,
+            respData.procedures[key].code,
+            respData.procedures[key].fee,
+            respData.procedures[key].name
+          )
+        )
+      }
+
       const loadedClinic = new Clinic(
         respData.clinic.id,
         respData.clinic.name,
@@ -54,6 +69,7 @@ export const getCommon = (token) => {
         sections: loadedSections,
         clinic: loadedClinic,
         users: loadedUsers,
+        procedures: loadedProcedures,
       })
     } catch (err) {
       throw new Error(err)

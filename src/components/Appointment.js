@@ -17,6 +17,7 @@ const Appointment = ({ item, index }) => {
     currentPatient && item.data.patientId
       ? navigation.navigate('Patient', {
           patientId: item.data.patientId,
+          title: currentPatient.fullName,
         })
       : null
   }

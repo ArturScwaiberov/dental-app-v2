@@ -268,10 +268,10 @@ const ToothFormulaScreen = ({ route, navigation }) => {
     <path class="cls-1" d="M285.18,800.14A33,33,0,0,1,272.31,803a23.61,23.61,0,0,1-11.44-2.89A49.28,49.28,0,0,0,285.18,800.14Z" />
     
     <rect class="cls-2" x="285.79" y="130" width="6" height="610" rx="3.49" ry="3.49" />
-    <rect class="cls-3" x="225.09" y="583.31" width="128.87" height="58.8" rx="20" ry="20" /><text class="cls-4" transform="translate(258.9 624.45)">низ</text>
-    <rect class="cls-3" x="91.35" y="416.22" width="141.13" height="58.8" rx="20" ry="20" /><text class="cls-4" transform="translate(110.5 457.35)">право</text>
-    <rect class="cls-3" x="351.36" y="416.22" width="128.87" height="58.8" rx="20" ry="20" /><text class="cls-4" transform="translate(373.11 457.35)">лево</text>
-    <rect class="cls-3" x="225.09" y="237.2" width="128.87" height="58.8" rx="20" ry="20" /><text class="cls-4" transform="translate(249.12 278.34)">верх</text>
+    <rect class="cls-3" x="225.09" y="237.2" width="128.87" height="58.8" rx="20" ry="20" /><text class="cls-4" transform="translate(267.9 278.34)">up</text>
+    <rect class="cls-3" x="225.09" y="583.31" width="128.87" height="58.8" rx="20" ry="20" /><text class="cls-4" transform="translate(242.0 624.45)">down</text>
+    <rect class="cls-3" x="91.35" y="416.22" width="141.13" height="58.8" rx="20" ry="20" /><text class="cls-4" transform="translate(120.5 457.35)">right</text>
+    <rect class="cls-3" x="351.36" y="416.22" width="128.87" height="58.8" rx="20" ry="20" /><text class="cls-4" transform="translate(386.5 457.35)">left</text>
     </g>
 </svg>
 `
@@ -292,7 +292,7 @@ const ToothFormulaScreen = ({ route, navigation }) => {
             {indents.length > 0 ? (
               <ButtonsWrapper>{indents}</ButtonsWrapper>
             ) : (
-              <Text style={{ alignSelf: 'center' }}>История приемов пуста</Text>
+              <Text style={{ alignSelf: 'center' }}>No appointments yet</Text>
             )}
             {descRows.length > 0 ? <View>{descRows}</View> : null}
           </>

@@ -18,7 +18,7 @@ const AuthScreen = () => {
             fontFamily: 'Roboto',
           }}
         >
-          Для регистрации пожалуйста обратитесь к управляющему данной клиники
+          Contact with clinic manager for registration
         </Text>
       </Content>
     </Container>

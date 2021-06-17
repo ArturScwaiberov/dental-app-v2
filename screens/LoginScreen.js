@@ -54,7 +54,7 @@ const LoginScreen = ({ navigation }) => {
           style={styles.thumbnail}
         />
         <Form>
-          <Label style={styles.label}>Введите Ваш email</Label>
+          <Label style={styles.label}>Enter your e-mail</Label>
 
           <Item picker>
             <Input
@@ -68,7 +68,7 @@ const LoginScreen = ({ navigation }) => {
             />
           </Item>
 
-          <Label style={styles.label}>Введите Ваш пароль</Label>
+          <Label style={styles.label}>Enter your password</Label>
 
           <Item picker>
             <Input
@@ -96,20 +96,20 @@ const LoginScreen = ({ navigation }) => {
                 }}
                 disabled={values.email && values.password ? false : true}
               >
-                <Text style={styles.buttonText}>Далее</Text>
+                <Text style={styles.buttonText}>Login</Text>
                 <Icon type='MaterialIcons' name='login' style={{ color: '#fff' }} />
               </Button>
               <Text style={errorMessage.length > 0 ? styles.label : null}>{errorMessage}</Text>
             </ButtonView>
           )}
           <Label style={styles.bottomText}>
-            Нет аккаунта?{' '}
+            Have no account?{' '}
             <TomatoText
               onPress={() => {
                 navigation.navigate('AuthScreen')
               }}
             >
-              Регистрация
+              Registration info
             </TomatoText>
           </Label>
         </Form>

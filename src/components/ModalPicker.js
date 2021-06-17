@@ -113,7 +113,7 @@ const ModalPicker = ({ items, header, showTitle, onSelect, selected, showSearchB
                       <Item style={{ height: 36, borderRadius: 10, backgroundColor: '#eee' }}>
                         <Icon name='ios-search' />
                         <Input
-                          placeholder='Поиск...'
+                          placeholder='Search...'
                           clearButtonMode='always'
                           value={searchValue}
                           onChange={(text) => onSearch(text)}

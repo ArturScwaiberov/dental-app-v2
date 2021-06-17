@@ -15,6 +15,7 @@ export default (state = initialState, action) => {
         sections: action.sections,
         clinic: action.clinic,
         users: action.users,
+        procedures: action.procedures,
       }
     case DROP_COMMON:
       return initialState

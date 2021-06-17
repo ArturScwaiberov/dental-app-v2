@@ -2,6 +2,8 @@ import axios from '../../core/axios'
 import Patient from '../../models/patient'
 
 export const GET_PATIENTS = 'GET_PATIENTS'
+export const GET_CUR_PATIENT = 'GET_CUR_PATIENT'
+
 const setLoaderAction = (payload) => ({
   type: 'SET_LOADER',
   payload,
@@ -35,6 +37,23 @@ export const getPatients = (token) => {
       }
 
       dispatch({ type: GET_PATIENTS, patients: loadedPatients, payload: true })
+    } catch (err) {
+      throw new Error(err)
+    } finally {
+      dispatch(setLoaderAction(false))
+    }
+  }
+}
+
+export const getPatient = (token, id) => {
+  return async (dispatch) => {
+    dispatch(setLoaderAction(true))
+    try {
+      const { data } = await axios.get(`/patients/${id}`, {
+        headers: { authorization: token },
+      })
+
+      dispatch({ type: GET_CUR_PATIENT, currentPatient: data, payload: true })
     } catch (err) {
       throw new Error(err)
     } finally {

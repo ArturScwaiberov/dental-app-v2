@@ -12,7 +12,7 @@ export default function AuthNavigator() {
       <Stack.Screen
         name='LoginScreen'
         options={{
-          title: 'Вход в кабинет',
+          title: 'Please Login',
           headerTintColor: '#2A86FF',
           headerTitleAlign: 'left',
           headerTitleStyle: {
@@ -28,7 +28,7 @@ export default function AuthNavigator() {
         name='AuthScreen'
         component={AuthScreen}
         options={{
-          title: 'Регистрация',
+          title: 'Registration',
           headerTintColor: '#2A86FF',
           headerTitleAlign: 'left',
           headerTitleStyle: {

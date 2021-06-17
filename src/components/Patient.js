@@ -28,9 +28,11 @@ const Patient = ({ navigation, item }) => {
         </FullName>
         <GrayText>{item.person.phone}</GrayText>
       </GroupDesc>
-      <GroupTime>
-        <TimeText>{item.person.sex === null ? 'gold' : item.person.sex[0].toUpperCase()}</TimeText>
-      </GroupTime>
+      {item.person.sex !== null && (
+        <GroupTime>
+          <TimeText>{item.person.sex[0].toUpperCase()}</TimeText>
+        </GroupTime>
+      )}
     </GroupItem>
   )
 }
@@ -46,7 +48,7 @@ const GroupTime = styled.View`
   border-radius: 18px;
   justify-content: center;
   align-items: center;
-  width: 70px;
+  width: 40px;
   height: 32px;
 `
 

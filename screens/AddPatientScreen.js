@@ -95,7 +95,7 @@ const AddPatientScreen = ({ navigation }) => {
               }}
               disabled={values.fullName && values.phone && values.birthday ? false : true}
             >
-              <Text style={{ color: '#fff' }}>Добавить пациента</Text>
+              <Text style={{ color: '#fff' }}>Add patient</Text>
               <Icon type='Entypo' name='plus' style={{ color: '#fff' }} />
             </Button>
           </View>

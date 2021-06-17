@@ -2,12 +2,12 @@ import React from 'react'
 import { Container, Content, Spinner } from 'native-base'
 import { endOfMonth, format, startOfMonth } from 'date-fns'
 import { useDispatch, useSelector } from 'react-redux'
+import { Text } from 'react-native'
 
 import { patientsApi } from '../utils'
 import CalendarV2 from '../src/components/CalendarV2'
 import * as commonActions from '../store/actions/common'
 import * as patientsActions from '../store/actions/patients'
-import { Text } from 'react-native'
 
 const AppointmentDateScreen = ({ navigation, route }) => {
   const [refreshing, setRefreshing] = React.useState(true)

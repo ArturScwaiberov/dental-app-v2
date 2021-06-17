@@ -1,9 +1,11 @@
 import React from 'react'
-import { Button, Icon, Text, Container, Content, View } from 'native-base'
+import { Button, Icon, Text, Container, Content, View, Thumbnail } from 'native-base'
 import { ActivityIndicator, Linking } from 'react-native'
-import { useSelector,useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { Ionicons } from '@expo/vector-icons'
 
 import * as authAction from '../store/actions/auth'
+import styled from 'styled-components'
 
 const HoursList = ({ hours }) => {
   const hoursArr = []
@@ -52,10 +54,10 @@ const UsersList = ({ clinicUsers }) => {
           justifyContent: 'space-between',
           flexWrap: 'wrap',
           alignItems: 'center',
-          marginVertical: 5,
+          padding: 2,
         }}
       >
-        <Text style={{ fontSize: 18 }}>
+        <Text>
           {element.fullName} {element.isAssistant && '(Assistant),'}{' '}
           {element.isDentist && '(Dentist)'}{' '}
         </Text>
@@ -83,41 +85,73 @@ function LogoutScreen() {
   const clinicHours = common.clinic.operatingHours
   const clinicName = common.clinic.name
   const clinicPhone = common.clinic.phone
+  const clinicEmail = common.clinic.email
   const clinicUsers = common.users
-  const clinicSections = common.sections
+  const clinicSections = common.sections.sort(function (a, b) {
+    if (a.name > b.name) {
+      return 1
+    }
+    if (a.name < b.name) {
+      return -1
+    }
+    return 0
+  })
+
   const dispatch = useDispatch()
 
   const signOut = () => {
     dispatch(authAction.logout())
   }
   return (
-    <Container style={{}}>
+    <Container>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-evenly',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+        }}
+      >
+        <Thumbnail
+          source={require('../src/images/dent_example_logo.jpg')}
+          style={{ height: 100, width: 100, resizeMode: 'cover' }}
+        />
+        {clinicName && (
+          <Text
+            style={{
+              flex: 1,
+              alignSelf: 'center',
+              fontSize: 22,
+              fontFamily: 'Roboto',
+              paddingLeft: 8,
+            }}
+          >
+            {clinicName}
+          </Text>
+        )}
+        {clinicEmail && (
+          <CallButton onPress={() => Linking.openURL('mailto:' + clinicEmail)}>
+            <Ionicons
+              style={{ marginTop: Platform.OS === 'ios' ? 2 : 0 }}
+              name='mail'
+              size={22}
+              color='white'
+            />
+          </CallButton>
+        )}
+        {clinicPhone && (
+          <CallButton onPress={() => Linking.openURL('tel:' + clinicPhone)}>
+            <Ionicons
+              style={{ marginTop: Platform.OS === 'ios' ? 2 : 0 }}
+              name='call'
+              size={22}
+              color='white'
+            />
+          </CallButton>
+        )}
+      </View>
       {clinicHours && clinicPhone ? (
         <Content style={{ paddingLeft: 20, paddingRight: 20 }}>
-          {clinicName && (
-            <Text
-              style={{
-                paddingTop: 8,
-                alignSelf: 'center',
-                fontSize: 20,
-                fontFamily: 'Roboto',
-              }}
-            >
-              {clinicName}
-            </Text>
-          )}
-          {clinicPhone && (
-            <Button
-              onPress={() => Linking.openURL('tel:' + clinicPhone)}
-              rounded
-              block
-              style={{ backgroundColor: '#84D269', marginTop: 10 }}
-            >
-              <Text style={{ color: '#fff' }}>Call to clinic</Text>
-              <Icon type='MaterialIcons' name='call' style={{ color: '#fff' }} />
-            </Button>
-          )}
-
           {clinicUsers && (
             <View style={{ paddingVertical: 8 }}>
               <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Clinic Doctors:</Text>
@@ -143,7 +177,7 @@ function LogoutScreen() {
             onPress={() => signOut()}
             rounded
             block
-            style={{ backgroundColor: '#ccc', marginBottom: 10 }}
+            style={{ backgroundColor: '#ccc', marginVertical: 10 }}
           >
             <Text style={{ color: '#222' }}>End session and logout</Text>
             <Icon type='MaterialIcons' name='logout' style={{ color: '#222' }} />
@@ -155,5 +189,15 @@ function LogoutScreen() {
     </Container>
   )
 }
+const CallButton = styled.TouchableOpacity({
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: '45px',
+  width: '45px',
+  height: '45px',
+  backgroundColor: '#84D269',
+  marginRight: 5,
+  marginLeft: 5,
+})
 
 export default LogoutScreen

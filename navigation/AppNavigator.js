@@ -27,7 +27,7 @@ const HeaderRight = ({ target }) => {
 
   return (
     <Button transparent onPress={() => navigation.navigate(target)}>
-      <Icon name='plus' type='Entypo' style={{ fontSize: 26, color: '#2A86FF' }} />
+      <Icon name='add' type='Ionicons' style={{ fontSize: 26, color: '#2A86FF' }} />
     </Button>
   )
 }
@@ -61,7 +61,6 @@ const navOptionsBackButton = {
     fontWeight: 'bold',
     fontSize: 20,
   },
-  headerBackTitleVisible: true,
 }
 
 function AppointmentCalendar({ route, navigation }) {
@@ -118,7 +117,7 @@ function AppointmentCalendar({ route, navigation }) {
                 onPress={goToConfirmScreen}
               >
                 <Icon
-                  name='ios-checkmark-done-sharp'
+                  name='checkmark-done'
                   type='Ionicons'
                   style={{
                     color: '#84D269',
@@ -133,7 +132,7 @@ function AppointmentCalendar({ route, navigation }) {
         component={ConfirmAppointmentScreen}
         options={({ route }) => {
           return {
-            title: route.params ? route.params.headerTime : 'Укажите подробности',
+            title: route.params ? route.params.headerTime : 'Choose date and time',
             ...navOptionsNoBackButton,
           }
         }}
@@ -148,14 +147,16 @@ function AppointmentsList({ route, navigation }) {
       <Stack.Screen
         name='AppointmentsList'
         component={HomeScreen}
-        options={{ title: 'Appointments List', ...navOptionsNoBackButton }}
+        options={{ title: 'Appointments', ...navOptionsNoBackButton }}
       />
       <Stack.Screen
         name='Patient'
         component={PatientScreen}
-        options={{
-          title: 'Карта пациента',
-          ...navOptionsBackButton,
+        options={({ route, navigation }) => {
+          return {
+            title: 'Medical Record',
+            ...navOptionsBackButton,
+          }
         }}
       />
 
@@ -163,7 +164,7 @@ function AppointmentsList({ route, navigation }) {
         name='ToothFormula'
         component={ToothFormulaScreen}
         options={{
-          title: 'Формула зубов',
+          title: 'Tooth Formula',
           ...navOptionsBackButton,
         }}
       />
@@ -178,9 +179,9 @@ function Patients({ route, navigation }) {
         name='PatientsList'
         component={PatientsListScreen}
         options={{
-          title: 'Patients List',
+          title: 'Patients',
           headerTintColor: '#2A86FF',
-          headerTitleAlign: 'left',
+          headerTitleAlign: 'center',
           headerTitleStyle: {
             fontWeight: 'bold',
             fontSize: 28,
@@ -193,16 +194,16 @@ function Patients({ route, navigation }) {
         component={PatientScreen}
         options={({ route, navigation }) => {
           return {
-            title: 'Карта пациента',
+            title: 'Medical Record',
             headerTintColor: '#2A86FF',
             headerTitleAlign: 'center',
             headerTitleStyle: {
               fontWeight: 'bold',
               fontSize: 20,
             },
-            headerRight: () => (
+            /* headerRight: () => (
               <HeaderRightEdit target={'EditPatient'} patientId={route.params.patientId} />
-            ),
+            ), */
           }
         }}
       />
@@ -210,7 +211,7 @@ function Patients({ route, navigation }) {
         name='ToothFormula'
         component={ToothFormulaScreen}
         options={{
-          title: 'Формула зубов',
+          title: 'Tooth Formula',
           ...navOptionsBackButton,
         }}
       />
@@ -218,7 +219,7 @@ function Patients({ route, navigation }) {
         name='AddPatient'
         component={AddPatientScreen}
         options={{
-          title: 'Добавить пациента',
+          title: 'Add Patient',
           ...navOptionsBackButton,
         }}
       />
@@ -226,7 +227,7 @@ function Patients({ route, navigation }) {
         name='EditPatient'
         component={EditPatientScreen}
         options={{
-          title: 'Редактировать пацента',
+          title: 'Edit Patient',
           ...navOptionsBackButton,
         }}
       />

@@ -1,8 +1,7 @@
-import { GET_PATIENTS, GET_CUR_PATIENT } from '../actions/patients'
+import { GET_NOTES, SET_NOTES } from '../actions/notes'
 
 const initialState = {
-  patients: [],
-  currentPatient: [],
+  notes: [],
   loading: false,
 }
 
@@ -13,15 +12,16 @@ export default (state = initialState, action) => {
         ...state,
         loading: action.payload,
       }
-    case GET_CUR_PATIENT:
+    case GET_NOTES:
       return {
         ...state,
-        currentPatient: action.currentPatient,
+        notes: action.notes,
         loading: action.payload,
       }
-    case GET_PATIENTS:
+    case SET_NOTES:
       return {
-        patients: action.patients,
+        ...state,
+        notes: action.notes,
         loading: action.payload,
       }
     default:
