@@ -15,7 +15,6 @@ export const getCommon = (token) => {
       })
 
       const respData = data
-      console.log('respData', respData)
 
       const loadedSections = []
       for (const key in respData.sections) {

@@ -1,6 +1,12 @@
 import React from 'react'
 import { Animated, Platform, RefreshControl, Linking, Text, View, Pressable } from 'react-native'
-import { Foundation, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons'
+import {
+  Foundation,
+  MaterialCommunityIcons,
+  Ionicons,
+  FontAwesome5,
+  MaterialIcons,
+} from '@expo/vector-icons'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
 import { GrayText, Button, Badge } from '../src/components'
@@ -375,7 +381,12 @@ const PatientScreen = ({ route, navigation }) => {
               Birth date: {currentPatient?.person?.birthday}
             </GrayText>
             <ButtonsWrapper>
-              <Button onPress={pressHandler}>Dental formula</Button>
+              <ToothButton onPress={pressHandler}>
+                <FontAwesome5 name='tooth' size={28} color='white' />
+              </ToothButton>
+              <MoneyButton onPress={pressHandler}>
+                <MaterialIcons name='monetization-on' size={28} color='white' />
+              </MoneyButton>
               <InvoiceButton onPress={() => setModalVisible(true)}>
                 <Ionicons name='ios-card' size={28} color='white' />
               </InvoiceButton>
@@ -496,6 +507,26 @@ const InvoiceButton = styled.TouchableOpacity({
   width: '45px',
   height: '45px',
   backgroundColor: '#f87300',
+  marginLeft: 10,
+})
+
+const MoneyButton = styled.TouchableOpacity({
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: '45px',
+  width: '45px',
+  height: '45px',
+  backgroundColor: '#84D269',
+  marginLeft: 10,
+})
+
+const ToothButton = styled.TouchableOpacity({
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: '45px',
+  width: '45px',
+  height: '45px',
+  backgroundColor: '#2A86FF',
   marginLeft: 10,
 })
 
