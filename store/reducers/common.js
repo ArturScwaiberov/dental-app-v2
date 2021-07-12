@@ -5,6 +5,7 @@ const initialState = {
   sections: [],
   clinic: {},
   users: [],
+  priceCategories: []
 }
 
 export default (state = initialState, action) => {
@@ -16,6 +17,7 @@ export default (state = initialState, action) => {
         clinic: action.clinic,
         users: action.users,
         procedures: action.procedures,
+        priceCategories: action.priceCategories
       }
     case DROP_COMMON:
       return initialState

@@ -27,8 +27,12 @@ const PatientScreen = ({ route, navigation }) => {
   const AnimatedGrayText = Animated.createAnimatedComponent(GrayText)
   const token = useSelector((state) => state.auth.token)
   const common = useSelector((state) => state.common)
-  const isLoadingPatients = useSelector((state) => state.patients.loading)
+  const isLoadingPatients = useSelector((state) => {
+    console.log('hey')
+    return state.patients.loading;
+  })
   const currentPatient = useSelector((state) => state.patients.currentPatient)
+  
   const notes = useSelector((state) => state.notes.notes).sort(function (a, b) {
     return new Date(b.createdAt) - new Date(a.createdAt)
   })

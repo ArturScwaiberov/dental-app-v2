@@ -7,7 +7,7 @@ import * as dateFns from 'date-fns'
 
 import {
   HomeScreen,
-  PatientScreen,
+  // PatientScreen,
   AddPatientScreen,
   PatientsListScreen,
   EditPatientScreen,
@@ -18,6 +18,8 @@ import {
 } from '../screens'
 import { Button, Icon, View } from 'native-base'
 import { TouchableOpacity } from 'react-native'
+
+import PatientScreen from '../screens/patient'
 
 const Tab = createBottomTabNavigator()
 const Stack = createStackNavigator()
@@ -157,15 +159,6 @@ function AppointmentsList({ route, navigation }) {
             title: 'Medical Record',
             ...navOptionsBackButton,
           }
-        }}
-      />
-
-      <Stack.Screen
-        name='ToothFormula'
-        component={ToothFormulaScreen}
-        options={{
-          title: 'Tooth Formula',
-          ...navOptionsBackButton,
         }}
       />
     </Stack.Navigator>

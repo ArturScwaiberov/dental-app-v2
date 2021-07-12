@@ -69,6 +69,7 @@ export const getCommon = (token) => {
         clinic: loadedClinic,
         users: loadedUsers,
         procedures: loadedProcedures,
+        priceCategories: respData.static.priceCategories
       })
     } catch (err) {
       throw new Error(err)
