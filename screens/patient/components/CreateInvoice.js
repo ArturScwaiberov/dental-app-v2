@@ -104,9 +104,15 @@ const CreateInvoice = ({ patient, onClose, onUpdate }) => {
 
 	const createInvoice = async () => {
 		await patientsApi.createInvoice(token, patient.id, {
+			// expireDate: '',
+			code: '',
+			note: '',
+			discountPercent: 0.0,
+			taxPercent: 0.0,
 			procedures: procedures.map((p) => ({
-				...p,
-				patientId: patient.id,
+				id: p.id,
+				qty: p.qty,
+				fee: p.fee,
 			})),
 		})
 		await onUpdate()

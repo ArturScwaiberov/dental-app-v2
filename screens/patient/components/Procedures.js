@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { FlatList, TouchableOpacity, View } from 'react-native'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components'
-import { patientsApi } from '../../../utils'
+// import { patientsApi } from '../../../utils'
 import ModalCloseButton from './ModalCloseButton'
 import ProcedureItem from './ProcedureItem'
 import Spacer from './Spacer'
@@ -54,8 +54,8 @@ const Procedures = ({ category, onClose, onAddProcedures }) => {
 		),
 	)
 
-	const token = useSelector((state) => state.auth.token)
-	const patient = useSelector((state) => state.patients.currentPatient)
+	// const token = useSelector((state) => state.auth.token)
+	// const patient = useSelector((state) => state.patients.currentPatient)
 
 	const selectProcedure = (procedure) => () => {
 		setSelectedProcedures([
@@ -101,9 +101,9 @@ const Procedures = ({ category, onClose, onAddProcedures }) => {
 
 	const addProcedures = async () => {
 		onAddProcedures(selectedProcedures)
-		await patientsApi.addProcedures(token, patient.id, {
-			data: selectedProcedures,
-		})
+		// await patientsApi.addProcedures(token, patient.id, {
+		// 	data: selectedProcedures,
+		// })
 		onClose()
 	}
 
