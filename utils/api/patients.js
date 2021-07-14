@@ -37,5 +37,5 @@ export default {
     addInvoicePayment: (token,patientId,invoiceId,data) => axios.post(`/patients/${patientId}/invoices/${invoiceId}/payments`,data,{headers: { authorization: token }}),
     addPayment: (token,patientId,data) => axios.post(`/patients/${patientId}/balance`,data,{headers: { authorization: token }}),
     createInvoice: (token,patientId,data) => axios.post(`/patients/${patientId}/invoices`,data,{headers: { authorization: token }}),
-    // addProcedures: (token,patientId,data) => axios.post(`/patients/${patientId}/procedures`,data,{headers: { authorization: token }})
+    addProcedures: (token,patientId,data) => axios.post(`/patients/${patientId}/procedures`,data,{headers: { authorization: token }})
 }

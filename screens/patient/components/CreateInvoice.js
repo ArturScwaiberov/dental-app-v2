@@ -104,7 +104,6 @@ const CreateInvoice = ({ patient, onClose, onUpdate }) => {
 
 	const createInvoice = async () => {
 		await patientsApi.createInvoice(token, patient.id, {
-			// expireDate: '',
 			code: '',
 			note: '',
 			discountPercent: 0.0,

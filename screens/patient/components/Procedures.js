@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { FlatList, TouchableOpacity, View } from 'react-native'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components'
-// import { patientsApi } from '../../../utils'
+import { patientsApi } from '../../../utils'
 import ModalCloseButton from './ModalCloseButton'
 import ProcedureItem from './ProcedureItem'
 import Spacer from './Spacer'
@@ -49,13 +49,13 @@ const Procedures = ({ category, onClose, onAddProcedures }) => {
 	const [selectedProcedures, setSelectedProcedures] = useState([])
 
 	const procedures = useSelector((state) =>
-		state.common.procedures.filter(
-			(p) => p.categoryIndex === category?.index,
-		),
+		state.common.procedures
+			.filter((p) => p.categoryIndex === category?.index)
+			.map((p) => ({ ...p, feeDefault: p.fee })),
 	)
 
-	// const token = useSelector((state) => state.auth.token)
-	// const patient = useSelector((state) => state.patients.currentPatient)
+	const token = useSelector((state) => state.auth.token)
+	const patient = useSelector((state) => state.patients.currentPatient)
 
 	const selectProcedure = (procedure) => () => {
 		setSelectedProcedures([
@@ -100,10 +100,10 @@ const Procedures = ({ category, onClose, onAddProcedures }) => {
 	}
 
 	const addProcedures = async () => {
+		await patientsApi.addProcedures(token, patient.id, {
+			data: selectedProcedures,
+		})
 		onAddProcedures(selectedProcedures)
-		// await patientsApi.addProcedures(token, patient.id, {
-		// 	data: selectedProcedures,
-		// })
 		onClose()
 	}
 

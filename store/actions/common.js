@@ -42,18 +42,18 @@ export const getCommon = (token) => {
         )
       }
 
-      const loadedProcedures = []
-      for (const key in respData.procedures) {
-        loadedProcedures.push(
-          new Procedure(
-            respData.procedures[key].id,
-            respData.procedures[key].categoryIndex,
-            respData.procedures[key].code,
-            respData.procedures[key].fee,
-            respData.procedures[key].name
-          )
-        )
-      }
+      const loadedProcedures = respData.procedures
+      // for (const key in respData.procedures) {
+      //   loadedProcedures.push(
+      //     new Procedure(
+      //       respData.procedures[key].id,
+      //       respData.procedures[key].categoryIndex,
+      //       respData.procedures[key].code,
+      //       respData.procedures[key].fee,
+      //       respData.procedures[key].name
+      //     )
+      //   )
+      // }
 
       const loadedClinic = new Clinic(
         respData.clinic.id,
