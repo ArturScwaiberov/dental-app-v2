@@ -100,7 +100,8 @@ const PaymentForm = ({ token, patient, invoiceTotal, onClose }) => {
 						<Button
 							style={{ flex: 1, marginRight: 16 }}
 							bordered
-							rounded
+							block
+							success
 							onPress={withdrawAmount}
 							disabled={!amount}
 						>
@@ -110,7 +111,8 @@ const PaymentForm = ({ token, patient, invoiceTotal, onClose }) => {
 
 					<Button
 						style={{ flex: 1 }}
-						rounded
+						block
+						success
 						onPress={payAmount}
 						disabled={!amount}
 					>
