@@ -1,9 +1,11 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import * as dateFns from 'date-fns'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { TouchableOpacity } from 'react-native'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import styled from 'styled-components'
+import ListEmpty from './ListEmpty'
+import Loader from './Loader'
 
 const RowBack = styled.View({
 	alignItems: 'center',
@@ -120,8 +122,14 @@ const MemoizedListItem = React.memo(ListItem)
 const NotesTab = ({ notes, common, onFetch, onDeleteNote }) => {
 	const { users: clinicUsers } = common
 
+	const [loading, setLoading] = useState(true)
+
 	useEffect(() => {
-		onFetch()
+		;(async () => {
+			setLoading(true)
+			await onFetch()
+			setLoading(false)
+		})()
 	}, [])
 
 	const renderItem = ({ item }) => (
@@ -142,6 +150,10 @@ const NotesTab = ({ notes, common, onFetch, onDeleteNote }) => {
 		</RowBack>
 	)
 
+	if (loading) {
+		return <Loader loading />
+	}
+
 	return (
 		<SwipeListView
 			data={notes}
@@ -152,6 +164,7 @@ const NotesTab = ({ notes, common, onFetch, onDeleteNote }) => {
 			previewOpenValue={-60}
 			previewOpenDelay={2000}
 			disableRightSwipe
+			ListEmptyComponent={ListEmpty}
 		/>
 	)
 }
