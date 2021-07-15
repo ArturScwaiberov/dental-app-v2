@@ -4,13 +4,13 @@ import { View } from 'react-native'
 import styled from 'styled-components'
 import { ModalPicker } from '../../../src/components'
 import { patientsApi } from '../../../utils'
+import ModalCloseButton from './ModalCloseButton'
 
 const ModalView = styled.View({
 	backgroundColor: 'white',
 	flex: 1,
 	borderRadius: 10,
 	padding: 15,
-	paddingTop: 30,
 })
 
 const Block = styled.View({ marginBottom: 20 })
@@ -53,6 +53,7 @@ const PaymentForm = ({ token, patient, invoiceTotal, onClose }) => {
 
 	return (
 		<ModalView>
+			<ModalCloseButton onClose={onClose} />
 			<View>
 				<Label>AMOUNT</Label>
 				<Block>
