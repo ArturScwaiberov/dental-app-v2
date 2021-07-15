@@ -1,6 +1,6 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import React, { useState } from 'react'
-import { FlatList, TouchableOpacity } from 'react-native'
+import { FlatList, Pressable } from 'react-native'
 import Modal from 'react-native-modal'
 import styled from 'styled-components'
 import { Badge } from '../../../src/components'
@@ -44,7 +44,7 @@ const AppointmentCard = styled.View({
 /**CHECK LATER: Make this component more lighther if FlatList is slow:*/
 const ListItem = ({ item, clinicUsers, clinicSections, onPress }) => {
 	return (
-		<TouchableOpacity onPress={onPress}>
+		<Pressable onPress={onPress}>
 			<AppointmentCard
 				style={{
 					shadowColor: 'gray',
@@ -150,7 +150,7 @@ const ListItem = ({ item, clinicUsers, clinicSections, onPress }) => {
 					</AppointmentCardRow>
 				)}
 			</AppointmentCard>
-		</TouchableOpacity>
+		</Pressable>
 	)
 }
 
