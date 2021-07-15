@@ -5,6 +5,7 @@ import Modal from 'react-native-modal'
 import styled from 'styled-components'
 import { Badge } from '../../../src/components'
 import EditAppointmentForm from './EditAppointmentForm'
+import ListEmpty from './ListEmpty'
 
 const Bold = styled.Text({
 	color: '#000',
@@ -187,6 +188,7 @@ const AppointmentsTab = ({
 				data={appointments}
 				keyExtractor={(item) => item.id}
 				renderItem={renderItem}
+				ListEmptyComponent={ListEmpty}
 			/>
 			<Modal
 				isVisible={!!appointmentId}
