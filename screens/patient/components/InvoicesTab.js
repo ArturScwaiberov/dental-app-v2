@@ -5,7 +5,7 @@ import {
 } from '@expo/vector-icons'
 import * as dateFns from 'date-fns'
 import React, { useState } from 'react'
-import { FlatList, TouchableOpacity } from 'react-native'
+import { FlatList, Pressable } from 'react-native'
 import Modal from 'react-native-modal'
 import styled from 'styled-components'
 import InvoiceDetail from './InvoiceDetail'
@@ -42,7 +42,7 @@ const AppointmentCard = styled.View({
 /**CHECK LATER: Make this component more lighther if FlatList is slow:*/
 const ListItem = ({ item, clinicUsers, onPress }) => {
 	return (
-		<TouchableOpacity onPress={onPress}>
+		<Pressable onPress={onPress}>
 			<AppointmentCard
 				style={{
 					shadowColor: 'gray',
@@ -113,7 +113,7 @@ const ListItem = ({ item, clinicUsers, onPress }) => {
 					</AppointmentCardLabel>
 				</AppointmentCardRow>
 			</AppointmentCard>
-		</TouchableOpacity>
+		</Pressable>
 	)
 }
 
