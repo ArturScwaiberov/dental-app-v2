@@ -152,7 +152,12 @@ const CreateInvoice = ({ patient, onClose, onUpdate }) => {
 				)}
 			/>
 
-			<Button block success onPress={createInvoice}>
+			<Button
+				block
+				success
+				onPress={createInvoice}
+				disabled={!procedures.length}
+			>
 				<Text>Create Invoice - ${invoiceTotal}</Text>
 			</Button>
 
