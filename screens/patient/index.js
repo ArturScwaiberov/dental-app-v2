@@ -10,6 +10,7 @@ import AddNoteForm from './components/AddNoteForm'
 import AppointmentsTab from './components/AppointmentsTab'
 import CreateInvoice from './components/CreateInvoice'
 import InvoicesTab from './components/InvoicesTab'
+import Loader from './components/Loader'
 import NotesTab from './components/NotesTab'
 import PatientDetail from './components/PatientDetail'
 import PaymentForm from './components/PaymentForm'
@@ -55,13 +56,9 @@ const Patient = ({ route, navigation }) => {
 	}
 
 	const fetchPatient = async () => {
-		setPatientLoading(true)
-
 		await fetchAppointments()
 
 		await dispatch(patientsActions.getPatient(token, patientId))
-
-		setPatientLoading(false)
 	}
 
 	const fetchNotes = async () => {
@@ -94,8 +91,10 @@ const Patient = ({ route, navigation }) => {
 
 	useEffect(() => {
 		;(async () => {
+			setPatientLoading(true)
 			await fetchPatient()
 			await fetchInvoices()
+			setPatientLoading(false)
 		})()
 	}, [])
 
@@ -125,6 +124,10 @@ const Patient = ({ route, navigation }) => {
 		await fetchAppointments()
 
 		cb && cb()
+	}
+
+	if (patientLoading) {
+		return <Loader loading={true} />
 	}
 
 	return (
