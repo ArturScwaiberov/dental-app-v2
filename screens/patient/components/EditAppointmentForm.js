@@ -5,7 +5,6 @@ import React, { useState } from 'react'
 import { ScrollView } from 'react-native'
 import styled from 'styled-components'
 import ModalCloseButton from './ModalCloseButton'
-import PatientDetail from './PatientDetail'
 import Spacer from './Spacer'
 
 const ModalView = styled.View({
@@ -134,9 +133,6 @@ const EditAppointmentForm = ({
 		<ModalView>
 			<ModalCloseButton onClose={onClose} />
 			<ScrollView>
-				<PatientDetail patient={patient} />
-
-				<Spacer value={10} />
 				<Centered>
 					<Time>{`${startTime
 						.split(':')
