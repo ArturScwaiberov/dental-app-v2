@@ -42,10 +42,10 @@ const AddNoteForm = ({ onCreate, onClose }) => {
 				/>
 			</Item>
 			<ButtonsWrapper>
-				<Button bordered rounded onPress={onClose}>
+				<Button bordered block success onPress={onClose}>
 					<Text>Cancel</Text>
 				</Button>
-				<Button rounded onPress={createNote} disabled={!note}>
+				<Button block success onPress={createNote} disabled={!note}>
 					<Text>Create note</Text>
 				</Button>
 			</ButtonsWrapper>
