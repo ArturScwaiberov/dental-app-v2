@@ -9,6 +9,7 @@ import { FlatList, Pressable } from 'react-native'
 import Modal from 'react-native-modal'
 import styled from 'styled-components'
 import InvoiceDetail from './InvoiceDetail'
+import ListEmpty from './ListEmpty'
 
 const Bold = styled.Text({
 	color: '#000',
@@ -140,6 +141,7 @@ const InvoicesTab = ({ invoices, common, onUpdate }) => {
 				data={invoices}
 				keyExtractor={(item) => item.id}
 				renderItem={renderItem}
+				ListEmptyComponent={ListEmpty}
 			/>
 			<Modal isVisible={!!invoice} onBackdropPress={hideInvoice}>
 				<InvoiceDetail
