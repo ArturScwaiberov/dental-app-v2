@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons'
 import { Button, Input, Item, Radio, Text } from 'native-base'
 import React, { useState } from 'react'
-import { TouchableOpacity, View } from 'react-native'
+import { ScrollView, TouchableOpacity, View } from 'react-native'
 import styled from 'styled-components'
 import ModalCloseButton from './ModalCloseButton'
 import Spacer from './Spacer'
@@ -72,80 +72,82 @@ const InvoicePaymentForm = ({ onClose, onAddPayment }) => {
 	return (
 		<ModalView>
 			<ModalCloseButton onClose={onClose} />
-			<Text
-				style={{
-					fontSize: 20,
-					fontWeight: 'bold',
-					textAlign: 'center',
-				}}
-			>
-				Add Payment
-			</Text>
-			<Spacer value={24} />
-
-			<Label>1. Select a payment method</Label>
-			<Spacer value={8} />
-			<Row>
-				<Cell
-					label='Cash'
-					icon='cash-outline'
-					checked={type === 'cash'}
-					onPress={press('cash')}
-				/>
-				<Spacer value={16} />
-				<Cell
-					label='Card'
-					icon='card-outline'
-					checked={type === 'card'}
-					onPress={press('card')}
-				/>
-			</Row>
-			<Spacer value={16} />
-			<Row>
-				<Cell
-					label='Insurance'
-					icon='umbrella-outline'
-					checked={type === 'insurance'}
-					onPress={press('insurance')}
-				/>
-				<Spacer value={16} />
-				<Cell
-					label='Balance'
-					icon='wallet-outline'
-					checked={type === 'balance'}
-					onPress={press('balance')}
-				/>
-			</Row>
-			<Spacer value={24} />
-			<Label>2. Enter amount</Label>
-			<Item
-				style={{
-					backgroundColor: 'white',
-					marginVertical: 8,
-					borderRadius: 8,
-				}}
-			>
-				<Input
-					onChangeText={setAmount}
-					value={amount}
+			<ScrollView>
+				<Text
 					style={{
-						fontSize: 16,
-						paddingVertical: 10,
-						paddingLeft: 7,
-						fontFamily: 'Roboto',
-						color: '#222',
+						fontSize: 20,
+						fontWeight: 'bold',
+						textAlign: 'center',
 					}}
-					keyboardType='numeric'
-				/>
-			</Item>
-			<Spacer value={48} />
-			<Button rounded full onPress={addInvoicePayment}>
-				<Text>
-					Add Payment - $
-					{amount ? parseFloat(amount).toFixed(2) : '0.00'}
+				>
+					Add Payment
 				</Text>
-			</Button>
-			<Spacer value={24} />
+				<Spacer value={24} />
+
+				<Label>1. Select a payment method</Label>
+				<Spacer value={8} />
+				<Row>
+					<Cell
+						label='Cash'
+						icon='cash-outline'
+						checked={type === 'cash'}
+						onPress={press('cash')}
+					/>
+					<Spacer value={16} />
+					<Cell
+						label='Card'
+						icon='card-outline'
+						checked={type === 'card'}
+						onPress={press('card')}
+					/>
+				</Row>
+				<Spacer value={16} />
+				<Row>
+					<Cell
+						label='Insurance'
+						icon='umbrella-outline'
+						checked={type === 'insurance'}
+						onPress={press('insurance')}
+					/>
+					<Spacer value={16} />
+					<Cell
+						label='Balance'
+						icon='wallet-outline'
+						checked={type === 'balance'}
+						onPress={press('balance')}
+					/>
+				</Row>
+				<Spacer value={24} />
+				<Label>2. Enter amount</Label>
+				<Item
+					style={{
+						backgroundColor: 'white',
+						marginVertical: 8,
+						borderRadius: 8,
+					}}
+				>
+					<Input
+						onChangeText={setAmount}
+						value={amount}
+						style={{
+							fontSize: 16,
+							paddingVertical: 10,
+							paddingLeft: 7,
+							fontFamily: 'Roboto',
+							color: '#222',
+						}}
+						keyboardType='numeric'
+					/>
+				</Item>
+				<Spacer value={48} />
+				<Button rounded full onPress={addInvoicePayment}>
+					<Text>
+						Add Payment - $
+						{amount ? parseFloat(amount).toFixed(2) : '0.00'}
+					</Text>
+				</Button>
+				<Spacer value={24} />
+			</ScrollView>
 		</ModalView>
 	)
 }
