@@ -1,15 +1,15 @@
-import { Button, Input, Item, Text } from 'native-base'
+import { Button, Item, Text, Textarea } from 'native-base'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
 const ButtonsWrapper = styled.View({
 	flexDirection: 'row',
 	justifyContent: 'space-between',
-	marginHorizontal: 20,
+	marginTop: 20,
 })
 
 const ModalView = styled.View({
-	marginTop: '30%',
+	flex: 1,
 	backgroundColor: 'white',
 	borderRadius: 10,
 	padding: 15,
@@ -23,22 +23,21 @@ const AddNoteForm = ({ onCreate, onClose }) => {
 	return (
 		<ModalView>
 			<Item style={{ marginBottom: 10 }}>
-				<Input
+				<Textarea
 					onChangeText={setNote}
 					value={note}
-					multiline
-					numberOfLines={5}
 					autoFocus
-					clearButtonMode='while-editing'
 					placeholder='Type note here..'
 					placeholderTextColor='#ccc'
 					style={{
 						fontSize: 16,
 						paddingVertical: 10,
-						paddingLeft: 7,
 						fontFamily: 'Roboto',
 						color: '#222',
+						flex: 1,
 					}}
+					bordered
+					rowSpan={5}
 				/>
 			</Item>
 			<ButtonsWrapper>
