@@ -12,9 +12,9 @@ const ModalPicker = ({ items, header, showTitle, onSelect, selected, showSearchB
     setModalVisible(!modalVisible)
   }
 
-  const selectHandler = (id) => {
+  const selectHandler = (id) => () => {
     onSelect(id)
-    toggleModal
+    toggleModal()
   }
 
   const selectedItem = items.find((item) => item.id === selected)
@@ -60,7 +60,7 @@ const ModalPicker = ({ items, header, showTitle, onSelect, selected, showSearchB
               renderItem={({ item, index }) => {
                 return (
                   <Pressable
-                    onPress={() => selectHandler(item.id)}
+                    onPress={selectHandler(item.id)}
                     style={{
                       width: '100%',
                       borderBottomWidth: 0.5,
@@ -70,6 +70,7 @@ const ModalPicker = ({ items, header, showTitle, onSelect, selected, showSearchB
                       alignItems: 'center',
                       flexDirection: 'row',
                       justifyContent: 'space-between',
+                      elevation: 100,
                     }}
                   >
                     <Text
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5,
+    // elevation: 5,
     overflow: 'hidden',
   },
   modalCancelView: {
@@ -201,7 +202,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5,
+    // elevation: 5,
   },
 })
 
