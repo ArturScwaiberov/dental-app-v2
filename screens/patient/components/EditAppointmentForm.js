@@ -1,6 +1,6 @@
 import { FontAwesome5 } from '@expo/vector-icons'
 import * as dateFns from 'date-fns'
-import { Button, Input, Label, Radio, Text } from 'native-base'
+import { Button, CheckBox, Label, Text, Textarea } from 'native-base'
 import React, { useState } from 'react'
 import { ScrollView } from 'react-native'
 import styled from 'styled-components'
@@ -50,10 +50,14 @@ const Select = ({ value, options, onChange }) => {
 		<Row>
 			{options.map((o) => (
 				<SelectOption key={o.value} onPress={selectValue(o.value)}>
-					<Radio
-						selected={value === o.value}
-						selectedColor={o.color}
-						color='lightgray'
+					<CheckBox
+						style={{
+							marginLeft: -10,
+							marginBottom: 8,
+							paddingLeft: 0,
+						}}
+						checked={value === o.value}
+						color={value === o.value ? o.color : 'lightgray'}
 						onPress={selectValue(o.value)}
 					/>
 					<SelectOptionLabel>{o.label}</SelectOptionLabel>
@@ -177,20 +181,18 @@ const EditAppointmentForm = ({
 					<Spacer value={10} />
 					<Label>Note</Label>
 				</LabelRow>
-				<Input
+				<Textarea
 					onChangeText={setNote}
 					value={note}
-					multiline
-					numberOfLines={3}
 					placeholder='Type note here..'
 					placeholderTextColor='#ccc'
-					style={{
-						marginTop: 8,
-						borderWidth: 1,
-						borderColor: '#ccc',
-						borderRadius: 5,
-					}}
 					disabled={loading}
+					rowSpan={3}
+					bordered
+					style={{
+						marginTop: 10,
+						paddingVertical: 10,
+					}}
 				/>
 
 				<Spacer value={20} />
