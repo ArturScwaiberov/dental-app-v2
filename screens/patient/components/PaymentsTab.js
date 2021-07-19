@@ -131,6 +131,10 @@ const PaymentsTab = ({ invoice, onAddPayment, onUpdate }) => {
 		await onUpdate()
 	}
 
+	const payRemained = invoice
+		? (invoice.totalAmount - invoice.paidAmount).toString()
+		: 0
+
 	return (
 		<View style={{ padding: 16, flex: 1 }}>
 			<Button full onPress={showAddPayment}>
@@ -151,6 +155,7 @@ const PaymentsTab = ({ invoice, onAddPayment, onUpdate }) => {
 				<InvoicePaymentForm
 					onClose={hideAddPayment}
 					onAddPayment={onAddPayment}
+					payRemained={payRemained}
 				/>
 			</Modal>
 

@@ -50,11 +50,9 @@ const Cell = ({ label, icon, checked, onPress }) => {
 		</TouchableOpacity>
 	)
 }
-//cash, card, insurance, balance
-//https://cpfxbicmq4.execute-api.us-east-1.amazonaws.com/prod/v1/patients/ac449c4a-75a1-40c6-b3f7-2184b98d1ae6/invoices/a2322612-70b1-475a-83e4-6d591f569fda/payments
-//amount
-const InvoicePaymentForm = ({ onClose, onAddPayment }) => {
-	const [amount, setAmount] = useState()
+
+const InvoicePaymentForm = ({ onClose, onAddPayment, payRemained }) => {
+	const [amount, setAmount] = useState(payRemained)
 	const [type, setType] = useState('cash')
 
 	const press = (type) => () => setType(type)
