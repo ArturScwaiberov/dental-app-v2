@@ -1,8 +1,10 @@
 import { Button, Input, Item, Text } from 'native-base'
 import React, { useState } from 'react'
 import { View } from 'react-native'
+import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { ModalPicker } from '../../../src/components'
+import * as patientsActions from '../../../store/actions/patients'
 import { patientsApi } from '../../../utils'
 import ModalCloseButton from './ModalCloseButton'
 
@@ -26,10 +28,11 @@ const ButtonsWrapper = styled.View({
 	marginTop: 20,
 })
 
-const PaymentForm = ({ token, patient, invoiceTotal, onClose }) => {
-	const { total, paid } = invoiceTotal
+const PaymentForm = ({ token, patient, onClose }) => {
 	const [amount, setAmount] = useState()
 	const [type, setType] = useState('cash')
+
+	const dispatch = useDispatch()
 
 	const payAmount = async () => {
 		await patientsApi.addPayment(token, patient.id, {
@@ -37,6 +40,8 @@ const PaymentForm = ({ token, patient, invoiceTotal, onClose }) => {
 			type,
 			isPayDebts: true, //check the effect later for this.
 		})
+
+		await dispatch(patientsActions.getPatient(token, patient.id))
 
 		onClose()
 	}
@@ -48,8 +53,12 @@ const PaymentForm = ({ token, patient, invoiceTotal, onClose }) => {
 			isPayDebts: true, //check the effect later for this.
 		})
 
+		await dispatch(patientsActions.getPatient(token, patient.id))
+
 		onClose()
 	}
+
+	const balance = patient ? parseFloat(patient.balance) : 0
 
 	return (
 		<ModalView>
@@ -96,7 +105,7 @@ const PaymentForm = ({ token, patient, invoiceTotal, onClose }) => {
 				</Block>
 
 				<ButtonsWrapper>
-					{total - paid > 0 ? (
+					{balance > 0 ? (
 						<Button
 							style={{ flex: 1, marginRight: 16 }}
 							bordered
@@ -116,9 +125,7 @@ const PaymentForm = ({ token, patient, invoiceTotal, onClose }) => {
 						onPress={payAmount}
 						disabled={!amount}
 					>
-						<Text>
-							{total - paid > 0 ? 'Pay Debts' : 'Deposit'}
-						</Text>
+						<Text>{balance >= 0 ? 'Deposit' : 'Pay Debts'}</Text>
 					</Button>
 				</ButtonsWrapper>
 			</View>

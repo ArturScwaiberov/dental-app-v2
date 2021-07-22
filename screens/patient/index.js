@@ -229,7 +229,6 @@ const Patient = ({ route, navigation }) => {
 				<PaymentForm
 					token={token}
 					patient={currentPatient}
-					invoiceTotal={invoiceTotal}
 					onClose={hidePayment}
 				/>
 			</Modal>
