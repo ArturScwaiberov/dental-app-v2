@@ -53,7 +53,11 @@ const InvoiceDetail = ({ invoice, onClose, onUpdate }) => {
 				</Text>
 				<Spacer value={24} />
 
-				<InvoiceSummary invoice={invoice} onAddPayment={() => {}} />
+				<InvoiceSummary
+					invoice={invoice}
+					patientId={patient.id}
+					onAddPayment={addPayment}
+				/>
 			</View>
 			<Spacer value={32} />
 

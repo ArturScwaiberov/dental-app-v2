@@ -1,8 +1,12 @@
 import { FontAwesome5 } from '@expo/vector-icons'
 import { Text } from 'native-base'
-import React from 'react'
+import React, { useState } from 'react'
 import { TouchableOpacity, View } from 'react-native'
+import Modal from 'react-native-modal'
+import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
+import * as patientsActions from '../../../store/actions/patients'
+import InvoicePaymentForm from './InvoicePaymentForm'
 import Spacer from './Spacer'
 
 const Row = styled.View({
@@ -63,7 +67,20 @@ const Cell = ({ line1, line2, onPress, disabled }) => {
 	)
 }
 
-const InvoiceSummary = ({ invoice, onAddPayment }) => {
+const InvoiceSummary = ({ invoice, patientId, onAddPayment }) => {
+	const [isAddPayment, setIsAddPayment] = useState(false)
+
+	const token = useSelector((state) => state.auth.token)
+	const dispatch = useDispatch()
+
+	const showAddPayment = () => setIsAddPayment(true)
+	const hideAddPayment = () => setIsAddPayment(false)
+
+	const addPayment = async (data, cb) => {
+		await onAddPayment(data, cb)
+		await dispatch(patientsActions.getPatient(token, patientId))
+	}
+
 	const {
 		subtotalAmount,
 		discountPercent,
@@ -77,6 +94,10 @@ const InvoiceSummary = ({ invoice, onAddPayment }) => {
 		100
 	).toFixed(2)
 	const isFullyPaid = totalAmount === paidAmount
+
+	const payRemained = invoice
+		? (invoice.totalAmount - invoice.paidAmount).toString()
+		: 0
 
 	return (
 		<View>
@@ -99,10 +120,18 @@ const InvoiceSummary = ({ invoice, onAddPayment }) => {
 							: `$${(totalAmount - paidAmount).toFixed(2)}`
 					}
 					line2={isFullyPaid ? 'Fully paid' : 'Pay remained'}
-					onPress={onAddPayment}
+					onPress={showAddPayment}
 					disabled={isFullyPaid}
 				/>
 			</Row>
+
+			<Modal isVisible={isAddPayment} onBackdropPress={hideAddPayment}>
+				<InvoicePaymentForm
+					onClose={hideAddPayment}
+					onAddPayment={addPayment}
+					payRemained={payRemained}
+				/>
+			</Modal>
 		</View>
 	)
 }
