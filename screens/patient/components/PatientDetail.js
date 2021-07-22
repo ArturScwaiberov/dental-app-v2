@@ -10,6 +10,7 @@ const PatientDetail = ({ patient, isMinimal }) => {
 	const totalDebts = patient?.statsInvoices?.totalDebts
 	const phone = patient?.person?.phone
 	const birthday = patient?.person?.birthday
+	const balance = patient?.balance
 
 	return (
 		<View
@@ -24,6 +25,8 @@ const PatientDetail = ({ patient, isMinimal }) => {
 				<>
 					<Spacer value={8} />
 					<GrayText>Total debts: {totalDebts}</GrayText>
+					<Spacer value={8} />
+					<GrayText>Total balance: {balance}</GrayText>
 					<Spacer value={8} />
 					<GrayText>Phone: {phone}</GrayText>
 					<Spacer value={8} />
