@@ -126,6 +126,11 @@ const Patient = ({ route, navigation }) => {
 		cb && cb()
 	}
 
+	const onUpdateCreateInvoice = async () => {
+		await fetchInvoices()
+		await dispatch(patientsActions.getPatient(token, patientId))
+	}
+
 	if (patientLoading) {
 		return <Loader loading={true} />
 	}
@@ -240,7 +245,7 @@ const Patient = ({ route, navigation }) => {
 				<CreateInvoice
 					patient={currentPatient}
 					onClose={hideCreateInvoice}
-					onUpdate={fetchInvoices}
+					onUpdate={onUpdateCreateInvoice}
 				/>
 			</Modal>
 		</Container>
