@@ -2,7 +2,7 @@ import { FontAwesome5 } from '@expo/vector-icons'
 import * as dateFns from 'date-fns'
 import { Button, CheckBox, Label, Text, Textarea } from 'native-base'
 import React, { useState } from 'react'
-import { ScrollView } from 'react-native'
+import { Platform, ScrollView } from 'react-native'
 import styled from 'styled-components'
 import ModalCloseButton from './ModalCloseButton'
 import Spacer from './Spacer'
@@ -54,7 +54,9 @@ const Select = ({ value, options, onChange }) => {
 						style={{
 							marginLeft: -10,
 							marginBottom: 8,
-							paddingLeft: 0,
+							...(Platform.OS === 'android'
+								? { paddingLeft: 0 }
+								: {}),
 						}}
 						checked={value === o.value}
 						color={value === o.value ? o.color : 'lightgray'}
