@@ -42,6 +42,7 @@ const AppointmentCard = styled.View({
 
 /**CHECK LATER: Make this component more lighther if FlatList is slow:*/
 const ListItem = ({ item, clinicUsers, onPress }) => {
+	const isFullyPaid = item.paidAmount - item.totalAmount === 0
 	return (
 		<Pressable onPress={onPress}>
 			<AppointmentCard
@@ -110,7 +111,12 @@ const ListItem = ({ item, clinicUsers, onPress }) => {
 						color='#A3A3A3'
 					/>
 					<AppointmentCardLabel>
-						Sum: <Bold>{item.paidAmount - item.totalAmount}</Bold>
+						Sum:{' '}
+						<Bold style={isFullyPaid ? { color: 'green' } : {}}>
+							{isFullyPaid
+								? item.paidAmount
+								: item.paidAmount - item.totalAmount}
+						</Bold>
 					</AppointmentCardLabel>
 				</AppointmentCardRow>
 			</AppointmentCard>

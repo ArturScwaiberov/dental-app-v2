@@ -52,7 +52,7 @@ const Cell = ({ label, icon, checked, onPress }) => {
 }
 
 const InvoicePaymentForm = ({ onClose, onAddPayment, payRemained }) => {
-	const [amount, setAmount] = useState(payRemained)
+	const [amount, setAmount] = useState(payRemained || '')
 	const [type, setType] = useState('cash')
 
 	const press = (type) => () => setType(type)
