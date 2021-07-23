@@ -1,10 +1,10 @@
 import { Button, Item, Text, Textarea } from 'native-base'
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import ModalCloseButton from './ModalCloseButton'
 
 const ButtonsWrapper = styled.View({
-	flexDirection: 'row',
-	justifyContent: 'space-between',
+	flex: 1,
 	marginTop: 20,
 })
 
@@ -22,6 +22,7 @@ const AddNoteForm = ({ onCreate, onClose }) => {
 
 	return (
 		<ModalView>
+			<ModalCloseButton onClose={onClose} />
 			<Item style={{ marginBottom: 10 }}>
 				<Textarea
 					onChangeText={setNote}
@@ -41,10 +42,13 @@ const AddNoteForm = ({ onCreate, onClose }) => {
 				/>
 			</Item>
 			<ButtonsWrapper>
-				<Button bordered block success onPress={onClose}>
-					<Text>Cancel</Text>
-				</Button>
-				<Button block success onPress={createNote} disabled={!note}>
+				<Button
+					full
+					block
+					success
+					onPress={createNote}
+					disabled={!note}
+				>
 					<Text>Create note</Text>
 				</Button>
 			</ButtonsWrapper>
