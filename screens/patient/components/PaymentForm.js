@@ -1,6 +1,6 @@
 import { Button, Input, Item, Text } from 'native-base'
 import React, { useState } from 'react'
-import { View } from 'react-native'
+import { Keyboard, TouchableWithoutFeedback, View } from 'react-native'
 import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { ModalPicker } from '../../../src/components'
@@ -60,76 +60,82 @@ const PaymentForm = ({ token, patient, onClose }) => {
 
 	const balance = patient ? parseFloat(patient.balance) : 0
 
+	const hideKeyboard = () => Keyboard.dismiss()
+
 	return (
-		<ModalView>
-			<ModalCloseButton onClose={onClose} />
-			<View>
-				<Label>AMOUNT</Label>
-				<Block>
-					<Item style={{ marginBottom: 10 }}>
-						<Input
-							onChangeText={setAmount}
-							value={amount}
-							autoFocus
-							placeholder='Amount..'
-							placeholderTextColor='#ccc'
-							style={{
-								fontSize: 16,
-								paddingVertical: 10,
-								paddingLeft: 7,
-								fontFamily: 'Roboto',
-								color: '#222',
-							}}
-							keyboardType='numeric'
+		<TouchableWithoutFeedback onPress={hideKeyboard}>
+			<ModalView>
+				<ModalCloseButton onClose={onClose} />
+				<View>
+					<Label>AMOUNT</Label>
+					<Block>
+						<Item style={{ marginBottom: 10 }}>
+							<Input
+								onChangeText={setAmount}
+								value={amount}
+								autoFocus
+								placeholder='Amount...'
+								placeholderTextColor='#ccc'
+								style={{
+									fontSize: 16,
+									paddingVertical: 10,
+									paddingLeft: 7,
+									fontFamily: 'Roboto',
+									color: '#222',
+								}}
+								keyboardType='numeric'
+							/>
+						</Item>
+					</Block>
+
+					<Block>
+						<Label>TYPE</Label>
+					</Block>
+
+					<Block style={{ height: 50 }}>
+						<ModalPicker
+							header={'Payment type'}
+							showTitle={'Payment type'}
+							items={[
+								{ id: 'cash', fullName: 'Cash' },
+								{ id: 'card', fullName: 'Card' },
+								{ id: 'insurance', fullName: 'Insurance' },
+								{ id: 'other', fullName: 'Other' },
+							]}
+							selected={type}
+							onSelect={setType}
 						/>
-					</Item>
-				</Block>
+					</Block>
 
-				<Block>
-					<Label>TYPE</Label>
-				</Block>
+					<ButtonsWrapper>
+						{balance > 0 ? (
+							<Button
+								style={{ flex: 1, marginRight: 16 }}
+								bordered
+								block
+								success
+								onPress={withdrawAmount}
+								disabled={!amount}
+							>
+								<Text>Withdrawal</Text>
+							</Button>
+						) : null}
 
-				<Block style={{ height: 50 }}>
-					<ModalPicker
-						header={'Payment type'}
-						showTitle={'Payment type'}
-						items={[
-							{ id: 'cash', fullName: 'Cash' },
-							{ id: 'card', fullName: 'Card' },
-							{ id: 'insurance', fullName: 'Insurance' },
-							{ id: 'other', fullName: 'Other' },
-						]}
-						selected={type}
-						onSelect={setType}
-					/>
-				</Block>
-
-				<ButtonsWrapper>
-					{balance > 0 ? (
 						<Button
-							style={{ flex: 1, marginRight: 16 }}
-							bordered
+							style={{ flex: 1 }}
 							block
 							success
-							onPress={withdrawAmount}
+							onPress={payAmount}
 							disabled={!amount}
 						>
-							<Text>Withdrawal</Text>
+							<Text>
+								{balance >= 0 ? 'Deposit' : 'Pay Debts'}
+							</Text>
 						</Button>
-					) : null}
-
-					<Button
-						style={{ flex: 1 }}
-						block
-						success
-						onPress={payAmount}
-						disabled={!amount}
-					>
-						<Text>{balance >= 0 ? 'Deposit' : 'Pay Debts'}</Text>
-					</Button>
-				</ButtonsWrapper>
-			</View>
-		</ModalView>
+					</ButtonsWrapper>
+				</View>
+			</ModalView>
+		</TouchableWithoutFeedback>
 	)
 }
 
