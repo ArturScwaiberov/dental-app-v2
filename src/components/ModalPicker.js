@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Header, Item, Input, Icon } from 'native-base'
-import { StyleSheet, Text, Pressable, View, FlatList, Platform } from 'react-native'
+import { StyleSheet, Text, Pressable, View, FlatList, Platform, Keyboard } from 'react-native'
 import Modal from 'react-native-modal'
 
 const ModalPicker = ({ items, header, showTitle, onSelect, selected, showSearchBar }, props) => {
@@ -8,6 +8,7 @@ const ModalPicker = ({ items, header, showTitle, onSelect, selected, showSearchB
   const [searchValue, setSearchValue] = React.useState('')
 
   const toggleModal = () => {
+    Keyboard.dismiss()
     setSearchValue('')
     setModalVisible(!modalVisible)
   }
