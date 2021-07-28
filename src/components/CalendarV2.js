@@ -241,7 +241,7 @@ const Days = ({ date }) => {
           </View>
           {showTimeSlots &&
           weekInMonthIndex === i &&
-          week.some((weekDay) => dateFns.isSameMonth(selectedDay, weekDay)) ? (
+          week.some((weekDay) => dateFns.isSameMonth(selectedDay, weekDay) && dateFns.isSameWeek(selectedDay, weekDay)) ? (
             <View>
               {isLoadingTimeSlots ? (
                 <Spinner color='blue' size='large' color='#2A86FF' />
