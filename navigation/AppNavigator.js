@@ -161,6 +161,15 @@ function AppointmentsList({ route, navigation }) {
           }
         }}
       />
+
+      <Stack.Screen
+        name='ToothFormula'
+        component={ToothFormulaScreen}
+        options={{
+          title: 'Tooth Formula',
+          ...navOptionsBackButton,
+        }}
+      />
     </Stack.Navigator>
   )
 }
