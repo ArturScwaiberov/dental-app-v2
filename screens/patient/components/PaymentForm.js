@@ -28,7 +28,7 @@ const ButtonsWrapper = styled.View({
 	marginTop: 20,
 })
 
-const PaymentForm = ({ token, patient, onClose }) => {
+const PaymentForm = ({ token, patient, onClose, onUpdate }) => {
 	const [amount, setAmount] = useState()
 	const [type, setType] = useState('cash')
 
@@ -42,6 +42,7 @@ const PaymentForm = ({ token, patient, onClose }) => {
 		})
 
 		await dispatch(patientsActions.getPatient(token, patient.id))
+		await onUpdate()
 
 		onClose()
 	}

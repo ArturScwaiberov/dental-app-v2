@@ -235,6 +235,7 @@ const Patient = ({ route, navigation }) => {
 					token={token}
 					patient={currentPatient}
 					onClose={hidePayment}
+					onUpdate={fetchInvoices}
 				/>
 			</Modal>
 
