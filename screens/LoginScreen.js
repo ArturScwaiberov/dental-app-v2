@@ -88,8 +88,8 @@ const LoginScreen = ({ navigation }) => {
             <ButtonView>
               <Button
                 onPress={submitHandler}
-                rounded
                 block
+                success
                 style={{
                   backgroundColor:
                     values.email && values.password ? '#84D269' : 'rgba(132, 210, 105, 0.5)',

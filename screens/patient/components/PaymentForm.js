@@ -7,137 +7,144 @@ import { ModalPicker } from '../../../src/components'
 import * as patientsActions from '../../../store/actions/patients'
 import { patientsApi } from '../../../utils'
 import ModalCloseButton from './ModalCloseButton'
+import Spacer from './Spacer'
 
 const ModalView = styled.View({
-	backgroundColor: 'white',
-	flex: 1,
-	borderRadius: 10,
-	padding: 15,
+  backgroundColor: 'white',
+  flex: 1,
+  borderRadius: 10,
+  padding: 15,
+  marginTop: 40,
 })
 
 const Block = styled.View({ marginBottom: 20 })
 
 const Label = styled.Text({
-	fontWeight: 'bold',
-	fontSize: 16,
+  fontWeight: 'bold',
+  fontSize: 16,
 })
 
 const ButtonsWrapper = styled.View({
-	flexDirection: 'row',
-	justifyContent: 'space-between',
-	marginTop: 20,
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  marginTop: 20,
 })
 
 const PaymentForm = ({ token, patient, onClose, onUpdate }) => {
-	const [amount, setAmount] = useState()
-	const [type, setType] = useState('cash')
+  const [amount, setAmount] = useState()
+  const [type, setType] = useState('cash')
 
-	const dispatch = useDispatch()
+  const dispatch = useDispatch()
 
-	const payAmount = async () => {
-		await patientsApi.addPayment(token, patient.id, {
-			amount,
-			type,
-			isPayDebts: true, //check the effect later for this.
-		})
+  const payAmount = async () => {
+    await patientsApi.addPayment(token, patient.id, {
+      amount,
+      type,
+      isPayDebts: true, //check the effect later for this.
+    })
 
-		await dispatch(patientsActions.getPatient(token, patient.id))
-		await onUpdate()
+    await dispatch(patientsActions.getPatient(token, patient.id))
+    await onUpdate()
 
-		onClose()
-	}
+    onClose()
+  }
 
-	const withdrawAmount = async () => {
-		await patientsApi.addPayment(token, patient.id, {
-			amount: -1 * amount,
-			type,
-			isPayDebts: true, //check the effect later for this.
-		})
+  const withdrawAmount = async () => {
+    await patientsApi.addPayment(token, patient.id, {
+      amount: -1 * amount,
+      type,
+      isPayDebts: true, //check the effect later for this.
+    })
 
-		await dispatch(patientsActions.getPatient(token, patient.id))
+    await dispatch(patientsActions.getPatient(token, patient.id))
 
-		onClose()
-	}
+    onClose()
+  }
 
-	const balance = patient ? parseFloat(patient.balance) : 0
+  const balance = patient ? parseFloat(patient.balance) : 0
 
-	const hideKeyboard = () => Keyboard.dismiss()
+  const hideKeyboard = () => Keyboard.dismiss()
 
-	return (
-		<TouchableWithoutFeedback onPress={hideKeyboard}>
-			<ModalView>
-				<ModalCloseButton onClose={onClose} />
-				<View>
-					<Label>AMOUNT</Label>
-					<Block>
-						<Item style={{ marginBottom: 10 }}>
-							<Input
-								onChangeText={setAmount}
-								value={amount}
-								autoFocus
-								placeholder='Amount...'
-								placeholderTextColor='#ccc'
-								style={{
-									fontSize: 16,
-									paddingVertical: 10,
-									paddingLeft: 7,
-									fontFamily: 'Roboto',
-									color: '#222',
-								}}
-								keyboardType='numeric'
-							/>
-						</Item>
-					</Block>
+  return (
+    <TouchableWithoutFeedback onPress={hideKeyboard}>
+      <ModalView>
+        <ModalCloseButton onClose={onClose} />
 
-					<Block>
-						<Label>TYPE</Label>
-					</Block>
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: 'bold',
+            textAlign: 'center',
+          }}
+        >
+          Add payment
+        </Text>
 
-					<Block style={{ height: 50 }}>
-						<ModalPicker
-							header={'Payment type'}
-							showTitle={'Payment type'}
-							items={[
-								{ id: 'cash', fullName: 'Cash' },
-								{ id: 'card', fullName: 'Card' },
-								{ id: 'insurance', fullName: 'Insurance' },
-								{ id: 'other', fullName: 'Other' },
-							]}
-							selected={type}
-							onSelect={setType}
-						/>
-					</Block>
+        <Spacer value={12} />
 
-					<ButtonsWrapper>
-						{balance > 0 ? (
-							<Button
-								style={{ flex: 1, marginRight: 16 }}
-								bordered
-								block
-								success
-								onPress={withdrawAmount}
-								disabled={!amount}
-							>
-								<Text>Withdrawal</Text>
-							</Button>
-						) : null}
+        <View>
+          <Label>AMOUNT</Label>
+          <Block>
+            <Item style={{ marginBottom: 10 }}>
+              <Input
+                onChangeText={setAmount}
+                value={amount}
+                autoFocus
+                placeholder='Amount...'
+                placeholderTextColor='#ccc'
+                style={{
+                  fontSize: 16,
+                  paddingVertical: 10,
+                  paddingLeft: 7,
+                  fontFamily: 'Roboto',
+                  color: '#222',
+                }}
+                keyboardType='numeric'
+              />
+            </Item>
+          </Block>
 
-						<Button
-							style={{ flex: 1 }}
-							block
-							success
-							onPress={payAmount}
-							disabled={!amount}
-						>
-							<Text>
-								{balance >= 0 ? 'Deposit' : 'Pay Debts'}
-							</Text>
-						</Button>
-					</ButtonsWrapper>
-				</View>
-			</ModalView>
-		</TouchableWithoutFeedback>
-	)
+          <Block>
+            <Label>TYPE</Label>
+          </Block>
+
+          <Block style={{ height: 50 }}>
+            <ModalPicker
+              header={'Payment type'}
+              showTitle={'Payment type'}
+              items={[
+                { id: 'cash', fullName: 'Cash' },
+                { id: 'card', fullName: 'Card' },
+                { id: 'insurance', fullName: 'Insurance' },
+                { id: 'other', fullName: 'Other' },
+              ]}
+              selected={type}
+              onSelect={setType}
+            />
+          </Block>
+
+          <ButtonsWrapper>
+            {balance > 0 ? (
+              <Button
+                style={{ flex: 1, marginRight: 16 }}
+                bordered
+                block
+                success
+                onPress={withdrawAmount}
+                disabled={!amount}
+              >
+                <Text>Withdrawal</Text>
+              </Button>
+            ) : null}
+
+            <Button style={{ flex: 1 }} block success onPress={payAmount} disabled={!amount}>
+              <Text>{balance >= 0 ? 'Deposit' : 'Pay Debts'}</Text>
+            </Button>
+          </ButtonsWrapper>
+        </View>
+      </ModalView>
+    </TouchableWithoutFeedback>
+  )
 }
 
 export default PaymentForm

@@ -3,10 +3,13 @@ import { useFocusEffect, useScrollToTop } from '@react-navigation/native'
 import { SectionList, RefreshControl, BackHandler, Text } from 'react-native'
 import styled from 'styled-components/native'
 import { useSelector } from 'react-redux'
+import { Button } from 'native-base'
 
 import { appointmentsApi } from '../utils/api'
 import { Appointment, SectionTitle } from '../src/components'
 import { addMonths, format } from 'date-fns'
+import Spacer from './patient/components/Spacer'
+import PlusButton from '../src/components/PlusButton'
 
 const HomeScreen = ({ navigation }) => {
   const [data, setData] = React.useState([])
@@ -98,7 +101,15 @@ const HomeScreen = ({ navigation }) => {
   }
 
   if (error) {
-    return <Text style={label}>{error}</Text>
+    return (
+      <Container style={{ alignItems: 'center' }}>
+        <Text style={label}>{error}</Text>
+        <Spacer value={12} />
+        <Button onPress={fetchAppointments} style={{ alignSelf: 'center' }}>
+          <Text style={{ paddingHorizontal: 18 }}>Reload</Text>
+        </Button>
+      </Container>
+    )
   }
 
   return (
@@ -116,6 +127,7 @@ const HomeScreen = ({ navigation }) => {
         ListEmptyComponent={() => listEmptyComponent()}
         stickySectionHeadersEnabled={true}
       />
+      <PlusButton onPress={() => navigation.navigate('AppointmentDateScreen')} />
     </Container>
   )
 }

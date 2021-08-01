@@ -7,147 +7,137 @@ import ModalCloseButton from './ModalCloseButton'
 import Spacer from './Spacer'
 
 const ModalView = styled.View({
-	backgroundColor: '#d9e3ff',
-	borderRadius: 10,
-	padding: 15,
+  backgroundColor: '#d9e3ff',
+  borderRadius: 10,
+  padding: 15,
 })
 
 const Label = styled.Text({
-	fontWeight: 'bold',
-	fontSize: 16,
+  fontWeight: 'bold',
+  fontSize: 16,
 })
 
 const Row = styled.View({
-	flexDirection: 'row',
-	justifyContent: 'space-between',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
 })
 
 const Cell = ({ label, icon, checked, onPress }) => {
-	return (
-		<TouchableOpacity onPress={onPress} style={{ flex: 1 }}>
-			<View
-				style={{
-					backgroundColor: 'white',
-					borderRadius: 8,
-					padding: 8,
-					alignItems: 'center',
-				}}
-			>
-				<Ionicons name={icon} size={32} color='#1C3892' />
-				<Spacer value={8} />
-				<View style={{ flexDirection: 'row' }}>
-					<Text style={{ color: '#737373', marginRight: 16 }}>
-						{label}
-					</Text>
-					<Radio
-						selected={checked}
-						selectedColor='#1C3892'
-						color='lightgray'
-						onPress={onPress}
-					/>
-				</View>
-			</View>
-		</TouchableOpacity>
-	)
+  return (
+    <TouchableOpacity onPress={onPress} style={{ flex: 1 }}>
+      <View
+        style={{
+          backgroundColor: 'white',
+          borderRadius: 8,
+          padding: 8,
+          alignItems: 'center',
+        }}
+      >
+        <Ionicons name={icon} size={32} color='#1C3892' />
+        <Spacer value={8} />
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={{ color: '#737373', marginRight: 16 }}>{label}</Text>
+          <Radio selected={checked} selectedColor='#1C3892' color='lightgray' onPress={onPress} />
+        </View>
+      </View>
+    </TouchableOpacity>
+  )
 }
 
 const InvoicePaymentForm = ({ onClose, onAddPayment, payRemained }) => {
-	const [amount, setAmount] = useState(payRemained || '')
-	const [type, setType] = useState('cash')
+  const [amount, setAmount] = useState(payRemained || '')
+  const [type, setType] = useState('cash')
 
-	const press = (type) => () => setType(type)
+  const press = (type) => () => setType(type)
 
-	const addInvoicePayment = () => {
-		onAddPayment(
-			{
-				amount,
-				type,
-			},
-			() => onClose(),
-		)
-	}
+  const addInvoicePayment = () => {
+    onAddPayment(
+      {
+        amount,
+        type,
+      },
+      () => onClose()
+    )
+  }
 
-	return (
-		<ModalView>
-			<ModalCloseButton onClose={onClose} />
-			<ScrollView>
-				<Text
-					style={{
-						fontSize: 20,
-						fontWeight: 'bold',
-						textAlign: 'center',
-					}}
-				>
-					Add Payment
-				</Text>
-				<Spacer value={24} />
+  return (
+    <ModalView>
+      <ModalCloseButton onClose={onClose} />
+      <ScrollView>
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: 'bold',
+            textAlign: 'center',
+          }}
+        >
+          Add Payment
+        </Text>
+        <Spacer value={24} />
 
-				<Label>1. Select a payment method</Label>
-				<Spacer value={8} />
-				<Row>
-					<Cell
-						label='Cash'
-						icon='cash-outline'
-						checked={type === 'cash'}
-						onPress={press('cash')}
-					/>
-					<Spacer value={16} />
-					<Cell
-						label='Card'
-						icon='card-outline'
-						checked={type === 'card'}
-						onPress={press('card')}
-					/>
-				</Row>
-				<Spacer value={16} />
-				<Row>
-					<Cell
-						label='Insurance'
-						icon='umbrella-outline'
-						checked={type === 'insurance'}
-						onPress={press('insurance')}
-					/>
-					<Spacer value={16} />
-					<Cell
-						label='Balance'
-						icon='wallet-outline'
-						checked={type === 'balance'}
-						onPress={press('balance')}
-					/>
-				</Row>
-				<Spacer value={24} />
-				<Label>2. Enter amount</Label>
-				<Item
-					style={{
-						backgroundColor: 'white',
-						marginVertical: 8,
-						borderRadius: 8,
-					}}
-				>
-					<Input
-						onChangeText={setAmount}
-						value={amount}
-						style={{
-							fontSize: 16,
-							paddingVertical: 10,
-							paddingLeft: 7,
-							fontFamily: 'Roboto',
-							color: '#222',
-						}}
-						keyboardType='numeric'
-					/>
-				</Item>
-				<Spacer value={48} />
-				<Button rounded full onPress={addInvoicePayment}>
-					<Text>
-						Add Payment - $
-						{amount ? parseFloat(amount).toFixed(2) : '0.00'}
-					</Text>
-				</Button>
-				<Spacer value={24} />
-			</ScrollView>
-		</ModalView>
-	)
+        <Label>1. Select a payment method</Label>
+        <Spacer value={8} />
+        <Row>
+          <Cell
+            label='Cash'
+            icon='cash-outline'
+            checked={type === 'cash'}
+            onPress={press('cash')}
+          />
+          <Spacer value={16} />
+          <Cell
+            label='Card'
+            icon='card-outline'
+            checked={type === 'card'}
+            onPress={press('card')}
+          />
+        </Row>
+        <Spacer value={16} />
+        <Row>
+          <Cell
+            label='Insurance'
+            icon='umbrella-outline'
+            checked={type === 'insurance'}
+            onPress={press('insurance')}
+          />
+          <Spacer value={16} />
+          <Cell
+            label='Balance'
+            icon='wallet-outline'
+            checked={type === 'balance'}
+            onPress={press('balance')}
+          />
+        </Row>
+        <Spacer value={24} />
+        <Label>2. Enter amount</Label>
+        <Item
+          style={{
+            backgroundColor: 'white',
+            marginVertical: 8,
+            borderRadius: 8,
+          }}
+        >
+          <Input
+            onChangeText={setAmount}
+            value={amount}
+            style={{
+              fontSize: 16,
+              paddingVertical: 10,
+              paddingLeft: 7,
+              fontFamily: 'Roboto',
+              color: '#222',
+            }}
+            keyboardType='numeric'
+          />
+        </Item>
+        <Spacer value={48} />
+        <Button block success onPress={addInvoicePayment}>
+          <Text>Add Payment - ${amount ? parseFloat(amount).toFixed(2) : '0.00'}</Text>
+        </Button>
+        <Spacer value={24} />
+      </ScrollView>
+    </ModalView>
+  )
 }
 
 export default InvoicePaymentForm

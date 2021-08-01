@@ -144,6 +144,36 @@ function AppointmentCalendar({ route, navigation }) {
 }
 
 function AppointmentsList({ route, navigation }) {
+  const selectedDay = useSelector((state) => state.calendar.selectedDay)
+  const selectedTimeSlots = useSelector((state) => state.calendar.selectedTimeSlots)
+
+  const goToConfirmScreen = () => {
+    const startAt = selectedTimeSlots[0].startAt
+    const startTime = dateFns.format(startAt, 'HH:mm:ss')
+    const endTime = dateFns.format(
+      dateFns.addMinutes(startAt, selectedTimeSlots.length * 15),
+      'HH:mm:ss'
+    )
+
+    const clinics = selectedTimeSlots.map((s) => s.clinicSectionIds)
+    const customers = selectedTimeSlots.map((s) => s.customerIds)
+
+    const clinicSectionIds = clinics.reduce((a, b) => a.filter((c) => b.includes(c)))
+    const customerIds = customers.reduce((a, b) => a.filter((c) => b.includes(c)))
+
+    navigation.navigate('ConfirmAppointmentScreen', {
+      headerTime: `${dateFns.format(startAt, 'HH:mm')} - ${dateFns.format(
+        dateFns.addMinutes(startAt, selectedTimeSlots.length * 15),
+        'HH:mm'
+      )}, ${dateFns.format(selectedDay, 'dd MMM')}`,
+      date: dateFns.format(selectedDay, 'YYY-MM-dd'),
+      startTime,
+      endTime,
+      clinicSectionIds,
+      customerIds,
+    })
+  }
+
   return (
     <Stack.Navigator initialRouteName='AppointmentsList'>
       <Stack.Screen
@@ -151,6 +181,50 @@ function AppointmentsList({ route, navigation }) {
         component={HomeScreen}
         options={{ title: 'Appointments', ...navOptionsNoBackButton }}
       />
+
+      <Stack.Screen
+        name='AppointmentDateScreen'
+        component={AppointmentDateScreen}
+        options={{
+          title: 'Create Appointment',
+          ...navOptionsNoBackButton,
+          headerLeft: () => (selectedTimeSlots.length ? <View style={{ width: 40 }} /> : null),
+          headerRight: () =>
+            selectedTimeSlots.length ? (
+              <TouchableOpacity
+                style={{
+                  right: 20,
+                  width: 40,
+                  height: 40,
+                  borderRadius: 25,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                onPress={goToConfirmScreen}
+              >
+                <Icon
+                  name='checkmark-done'
+                  type='Ionicons'
+                  style={{
+                    color: '#84D269',
+                  }}
+                />
+              </TouchableOpacity>
+            ) : null,
+        }}
+      />
+
+      <Stack.Screen
+        name='ConfirmAppointmentScreen'
+        component={ConfirmAppointmentScreen}
+        options={({ route }) => {
+          return {
+            title: route.params ? route.params.headerTime : 'Choose date and time',
+            ...navOptionsNoBackButton,
+          }
+        }}
+      />
+
       <Stack.Screen
         name='Patient'
         component={PatientScreen}
@@ -261,22 +335,6 @@ function Home({ navigation }) {
         showLabel: false,
       }}
     >
-      <Tab.Screen
-        name='AppointmentsCalendarTab'
-        component={AppointmentCalendar}
-        options={{
-          tabBarLabel: 'Запись на прием',
-          tabBarIcon: ({ color }) => (
-            <Icon name='calendar' type='Entypo' style={{ color: color }} />
-          ),
-        }}
-        listeners={({ navigation }) => ({
-          tabPress: (e) => {
-            e.preventDefault()
-            navigation.navigate('AppointmentDateScreen')
-          },
-        })}
-      />
       <Tab.Screen
         name='AppointmentsListTab'
         component={AppointmentsList}

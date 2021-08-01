@@ -175,8 +175,8 @@ function LogoutScreen() {
 
           <Button
             onPress={() => signOut()}
-            rounded
             block
+            success
             style={{ backgroundColor: '#ccc', marginVertical: 10 }}
           >
             <Text style={{ color: '#222' }}>End session and logout</Text>

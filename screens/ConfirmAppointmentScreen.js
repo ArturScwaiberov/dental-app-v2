@@ -21,32 +21,36 @@ import ModalPicker from '../src/components/ModalPicker'
 import { appointmentsApi, patientsApi } from '../utils'
 
 const ConfirmAppointmentScreen = ({ navigation, route }) => {
-  const {date,startTime,endTime,clinicSectionIds,customerIds} = route.params;
+  const { date, startTime, endTime, clinicSectionIds, customerIds } = route.params
 
   const [error, setError] = React.useState('')
   const [active, setActive] = React.useState('first')
   const [loading, setLoading] = React.useState(false)
   const token = useSelector((state) => state.auth.token)
   const { patients } = useSelector((state) => state.patients)
-  const sectionsList = useSelector((state) => state.common.sections).filter(section=>clinicSectionIds.includes(section.id)).sort(function (a, b) {
-    if (a.name > b.name) {
-      return 1
-    }
-    if (a.name < b.name) {
-      return -1
-    }
-    return 0
-  })
+  const sectionsList = useSelector((state) => state.common.sections)
+    .filter((section) => clinicSectionIds.includes(section.id))
+    .sort(function (a, b) {
+      if (a.name > b.name) {
+        return 1
+      }
+      if (a.name < b.name) {
+        return -1
+      }
+      return 0
+    })
 
-  const usersList = useSelector((state) => state.common.users).filter(user=>customerIds.includes(user.id)).sort(function (a, b) {
-    if (a.fullName > b.fullName) {
-      return 1
-    }
-    if (a.fullName < b.fullName) {
-      return -1
-    }
-    return 0
-  })
+  const usersList = useSelector((state) => state.common.users)
+    .filter((user) => customerIds.includes(user.id))
+    .sort(function (a, b) {
+      if (a.fullName > b.fullName) {
+        return 1
+      }
+      if (a.fullName < b.fullName) {
+        return -1
+      }
+      return 0
+    })
 
   const patientsList = patients.sort(function (a, b) {
     if (a.fullName > b.fullName) {
@@ -61,7 +65,6 @@ const ConfirmAppointmentScreen = ({ navigation, route }) => {
   const [selectedPatient, setSelectedPatient] = React.useState('')
   const [selectedUser, setSelectedUser] = React.useState('')
   const [selectedSection, setSelectedSection] = React.useState('')
-
 
   const selectSectionHandler = (item) => {
     setSelectedSection(item)
@@ -98,7 +101,7 @@ const ConfirmAppointmentScreen = ({ navigation, route }) => {
         .catch((err) => {
           setError('ERROR after sending appointment (existing patient)')
         })
-        .finally(()=>setLoading(false))
+        .finally(() => setLoading(false))
     }
 
     if (loading) {
@@ -207,8 +210,8 @@ const ConfirmAppointmentScreen = ({ navigation, route }) => {
           <View style={{ marginTop: 10 }}>
             <Button
               onPress={submitHandler}
-              rounded
               block
+              success
               style={{
                 backgroundColor:
                   selectedSection && selectedUser && selectedPatient
@@ -433,8 +436,8 @@ const ConfirmAppointmentScreen = ({ navigation, route }) => {
           <View style={{ marginTop: 10 }}>
             <Button
               onPress={submitHandler}
-              rounded
               block
+              success
               style={{
                 backgroundColor:
                   selectedSection &&
@@ -484,7 +487,7 @@ const ConfirmAppointmentScreen = ({ navigation, route }) => {
         .catch((err) => {
           setError('ERROR after sending appointment (no patient)')
         })
-        .finally(()=>setLoading(false))
+        .finally(() => setLoading(false))
     }
 
     if (loading) {
@@ -570,8 +573,8 @@ const ConfirmAppointmentScreen = ({ navigation, route }) => {
           <View style={{ marginTop: 10 }}>
             <Button
               onPress={submitHandler}
-              rounded
               block
+              success
               style={{
                 backgroundColor:
                   selectedSection && selectedUser ? '#84D269' : 'rgba(132, 210, 105, 0.5)',

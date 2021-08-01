@@ -3,15 +3,20 @@ import React from 'react'
 import styled from 'styled-components'
 
 const Container = styled.View({
-	alignItems: 'flex-end',
+  alignItems: 'flex-end',
+  position: 'absolute',
+  top: 10,
+  right: 10,
+  padding: 5,
+  zIndex: 1111,
 })
 
 const ModalCloseButton = ({ onClose }) => {
-	return (
-		<Container>
-			<Ionicons name='close' size={20} color='black' onPress={onClose} />
-		</Container>
-	)
+  return (
+    <Container>
+      <Ionicons name='close' size={24} color='black' onPress={onClose} />
+    </Container>
+  )
 }
 
 export default ModalCloseButton
