@@ -1,10 +1,11 @@
-import React from 'react'
+import React,{useEffect} from 'react'
 import { Button, Icon, Text, Container, Content, View, Thumbnail } from 'native-base'
 import { ActivityIndicator, Linking } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { Ionicons } from '@expo/vector-icons'
 
 import * as authAction from '../store/actions/auth'
+import * as commonActions from '../store/actions/common'
 import styled from 'styled-components'
 
 const HoursList = ({ hours }) => {
@@ -81,6 +82,7 @@ const UsersList = ({ clinicUsers }) => {
 }
 
 function LogoutScreen() {
+  const token = useSelector((state) => state.auth.token)
   const common = useSelector((state) => state.common)
   const clinicHours = common.clinic.operatingHours
   const clinicName = common.clinic.name
@@ -102,6 +104,11 @@ function LogoutScreen() {
   const signOut = () => {
     dispatch(authAction.logout())
   }
+
+  useEffect(()=>{
+    dispatch(commonActions.getCommon(token))
+  },[])
+
   return (
     <Container>
       <View
