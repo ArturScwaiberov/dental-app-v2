@@ -24,10 +24,9 @@ const Patient = ({ route, navigation }) => {
   const notes = useSelector((state) => state.notes.notes)
   const common = useSelector((state) => state.common)
 
-  const [patientLoading, setPatientLoading] = useState(true)
-  const [appointments, setAppointments] = useState()
-  const [invoices, setInvoices] = useState()
-  const [invoiceTotal, setInvoiceTotal] = useState({ total: 0, paid: 0 })
+  const patientLoading = useSelector(state=>state.patients.patientLoading)
+  const appointments = useSelector(state=>state.patients.appointments)
+  const invoices = useSelector(state=>state.patients.invoices)
 
   const [isAddNote, setIsAddNote] = useState(false)
   const showAddNote = () => setIsAddNote(true)
@@ -43,13 +42,13 @@ const Patient = ({ route, navigation }) => {
 
   const dispatch = useDispatch()
 
-  const fetchAppointments = async () => {
-    const { data: appointments } = await appointmentsApi.get(token, patientId)
-    setAppointments(appointments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
-  }
+  // const fetchAppointments = async () => {
+  //   const { data: appointments } = await appointmentsApi.get(token, patientId)
+  //   setAppointments(appointments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
+  // }
 
   const fetchPatient = async () => {
-    await fetchAppointments()
+    await dispatch(patientsActions.fetchAppointments(token,patientId))
 
     await dispatch(patientsActions.getPatient(token, patientId))
   }
@@ -59,33 +58,15 @@ const Patient = ({ route, navigation }) => {
   }
 
   const fetchInvoices = async () => {
-    const { data } = await patientsApi.getInvoices(token, patientId)
-    setInvoices(data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
-
-    const { total, paid } = data.reduce(
-      (a, invoice) => {
-        a['total'] += parseFloat(invoice.totalAmount)
-        a['paid'] += parseFloat(invoice.paidAmount)
-        return a
-      },
-      {
-        total: 0,
-        paid: 0,
-      }
-    )
-
-    setInvoiceTotal({
-      total,
-      paid,
-    })
+    await dispatch(patientsActions.fetchInvoices(token,patientId))
   }
 
   useEffect(() => {
     ;(async () => {
-      setPatientLoading(true)
+      dispatch(patientsActions.setPatientLoading(true))
       await fetchPatient()
       await fetchInvoices()
-      setPatientLoading(false)
+      dispatch(patientsActions.setPatientLoading(false))
     })()
   }, [])
 
@@ -108,7 +89,7 @@ const Patient = ({ route, navigation }) => {
   const updateAppointment = async (appointment, cb) => {
     await appointmentsApi.updateAppointment(token, appointment.id, appointment)
 
-    await fetchAppointments()
+    await dispatch(patientsActions.fetchAppointments(token,patientId))
 
     cb && cb()
   }
