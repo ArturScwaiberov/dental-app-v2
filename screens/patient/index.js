@@ -1,9 +1,11 @@
 import { Container, DefaultTabBar, Tab, Tabs } from 'native-base'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Modal from 'react-native-modal'
 import { useDispatch, useSelector } from 'react-redux'
+
 import * as notesActions from '../../store/actions/notes'
 import * as patientsActions from '../../store/actions/patients'
+import * as commonActions from '../../store/actions/common'
 import { appointmentsApi, patientsApi } from '../../utils'
 import ActionButtons from './components/ActionButtons'
 import AddNoteForm from './components/AddNoteForm'
@@ -24,19 +26,19 @@ const Patient = ({ route, navigation }) => {
   const notes = useSelector((state) => state.notes.notes)
   const common = useSelector((state) => state.common)
 
-  const patientLoading = useSelector(state=>state.patients.patientLoading)
-  const appointments = useSelector(state=>state.patients.appointments)
-  const invoices = useSelector(state=>state.patients.invoices)
+  const patientLoading = useSelector((state) => state.patients.patientLoading)
+  const appointments = useSelector((state) => state.patients.appointments)
+  const invoices = useSelector((state) => state.patients.invoices)
 
-  const [isAddNote, setIsAddNote] = useState(false)
+  const [isAddNote, setIsAddNote] = React.useState(false)
   const showAddNote = () => setIsAddNote(true)
   const hideAddNote = () => setIsAddNote(false)
 
-  const [isPayment, setIsPayment] = useState(false)
+  const [isPayment, setIsPayment] = React.useState(false)
   const showPayment = () => setIsPayment(true)
   const hidePayment = () => setIsPayment(false)
 
-  const [isCreateInvoice, setIsCreateInvoice] = useState(false)
+  const [isCreateInvoice, setIsCreateInvoice] = React.useState(false)
   const showCreateInvoice = () => setIsCreateInvoice(true)
   const hideCreateInvoice = () => setIsCreateInvoice(false)
 
@@ -48,9 +50,13 @@ const Patient = ({ route, navigation }) => {
   // }
 
   const fetchPatient = async () => {
-    await dispatch(patientsActions.fetchAppointments(token,patientId))
+    await dispatch(patientsActions.fetchAppointments(token, patientId))
 
     await dispatch(patientsActions.getPatient(token, patientId))
+  }
+
+  const fetchCommons = async () => {
+    await dispatch(commonActions.getCommon(token))
   }
 
   const fetchNotes = async () => {
@@ -58,12 +64,13 @@ const Patient = ({ route, navigation }) => {
   }
 
   const fetchInvoices = async () => {
-    await dispatch(patientsActions.fetchInvoices(token,patientId))
+    await dispatch(patientsActions.fetchInvoices(token, patientId))
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     ;(async () => {
       dispatch(patientsActions.setPatientLoading(true))
+      await fetchCommons()
       await fetchPatient()
       await fetchInvoices()
       dispatch(patientsActions.setPatientLoading(false))
@@ -89,7 +96,7 @@ const Patient = ({ route, navigation }) => {
   const updateAppointment = async (appointment, cb) => {
     await appointmentsApi.updateAppointment(token, appointment.id, appointment)
 
-    await dispatch(patientsActions.fetchAppointments(token,patientId))
+    await dispatch(patientsActions.fetchAppointments(token, patientId))
 
     cb && cb()
   }

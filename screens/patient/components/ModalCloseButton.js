@@ -11,12 +11,29 @@ const Container = styled.View({
   zIndex: 1111,
 })
 
-const ModalCloseButton = ({ onClose }) => {
-  return (
-    <Container>
-      <Ionicons name='close' size={24} color='black' onPress={onClose} />
-    </Container>
-  )
+const ContainerNoPadding = styled.View({
+  alignItems: 'flex-end',
+  position: 'absolute',
+  top: 5,
+  right: 0,
+  padding: 5,
+  zIndex: 1111,
+})
+
+const ModalCloseButton = ({ onClose, padding }) => {
+  if (padding) {
+    return (
+      <ContainerNoPadding>
+        <Ionicons name='close' size={24} color='black' onPress={onClose} />
+      </ContainerNoPadding>
+    )
+  } else {
+    return (
+      <Container>
+        <Ionicons name='close' size={24} color='black' onPress={onClose} />
+      </Container>
+    )
+  }
 }
 
 export default ModalCloseButton

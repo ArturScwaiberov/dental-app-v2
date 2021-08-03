@@ -1,6 +1,6 @@
 import { FontAwesome5 } from '@expo/vector-icons'
 import * as dateFns from 'date-fns'
-import { Button, CheckBox, Label, Text, Textarea } from 'native-base'
+import { Button, CheckBox, Content, Label, Text, Textarea } from 'native-base'
 import React, { useState } from 'react'
 import { Platform, ScrollView } from 'react-native'
 import styled from 'styled-components'
@@ -11,7 +11,6 @@ const ModalView = styled.View({
   backgroundColor: 'white',
   flex: 1,
   borderRadius: 10,
-  padding: 15,
   marginTop: 40,
 })
 
@@ -127,65 +126,67 @@ const EditAppointmentForm = ({ patient, appointment, providers, clinics, onClose
 
   return (
     <ModalView>
-      <ModalCloseButton onClose={onClose} />
-      <ScrollView>
-        <Centered>
-          <Time>{`${startTime
-            .split(':')
-            .filter((_, i) => i < 2)
-            .join(':')} - ${endTime
-            .split(':')
-            .filter((_, i) => i < 2)
-            .join(':')}, ${dateFns.format(new Date(date), 'dd MMM')}`}</Time>
-        </Centered>
-        <Spacer value={10} />
-        <Select value={status} options={STATUS_OPTIONS} onChange={setStatus} />
-        <Spacer value={20} />
-        <LabelRow>
-          <FontAwesome5 name='door-open' size={20} color='#ccc' />
+      <Content padder style={{ padding: 15 }}>
+        <ModalCloseButton onClose={onClose} padding />
+        <ScrollView>
+          <Centered>
+            <Time>{`${startTime
+              .split(':')
+              .filter((_, i) => i < 2)
+              .join(':')} - ${endTime
+              .split(':')
+              .filter((_, i) => i < 2)
+              .join(':')}, ${dateFns.format(new Date(date), 'dd MMM')}`}</Time>
+          </Centered>
           <Spacer value={10} />
-          <Label>Room</Label>
-        </LabelRow>
-        <ValueRow>
-          <Label>{room}</Label>
-        </ValueRow>
+          <Select value={status} options={STATUS_OPTIONS} onChange={setStatus} />
+          <Spacer value={20} />
+          <LabelRow>
+            <FontAwesome5 name='door-open' size={20} color='#ccc' />
+            <Spacer value={10} />
+            <Label>Room</Label>
+          </LabelRow>
+          <ValueRow>
+            <Label>{room}</Label>
+          </ValueRow>
 
-        <Spacer value={20} />
-        <LabelRow>
-          <FontAwesome5 name='user-md' size={20} color='#ccc' />
-          <Spacer value={10} />
-          <Label>Provider</Label>
-        </LabelRow>
-        <ValueRow>
-          <Label>{provider}</Label>
-        </ValueRow>
+          <Spacer value={20} />
+          <LabelRow>
+            <FontAwesome5 name='user-md' size={20} color='#ccc' />
+            <Spacer value={10} />
+            <Label>Provider</Label>
+          </LabelRow>
+          <ValueRow>
+            <Label>{provider}</Label>
+          </ValueRow>
 
-        <Spacer value={20} />
-        <LabelRow>
-          <FontAwesome5 name='align-left' size={20} color='#ccc' />
-          <Spacer value={10} />
-          <Label>Note</Label>
-        </LabelRow>
-        <Textarea
-          onChangeText={setNote}
-          value={note}
-          placeholder='Type note here..'
-          placeholderTextColor='#ccc'
-          disabled={loading}
-          rowSpan={3}
-          bordered
-          style={{
-            marginTop: 10,
-            paddingVertical: 10,
-          }}
-        />
+          <Spacer value={20} />
+          <LabelRow>
+            <FontAwesome5 name='align-left' size={20} color='#ccc' />
+            <Spacer value={10} />
+            <Label>Note</Label>
+          </LabelRow>
+          <Textarea
+            onChangeText={setNote}
+            value={note}
+            placeholder='Type note here..'
+            placeholderTextColor='#ccc'
+            disabled={loading}
+            rowSpan={3}
+            bordered
+            style={{
+              marginTop: 10,
+              paddingVertical: 10,
+            }}
+          />
 
-        <Spacer value={20} />
+          <Spacer value={20} />
 
-        <Button block success onPress={save} disabled={loading}>
-          <Text>Save</Text>
-        </Button>
-      </ScrollView>
+          <Button block success onPress={save} disabled={loading}>
+            <Text>Save</Text>
+          </Button>
+        </ScrollView>
+      </Content>
     </ModalView>
   )
 }

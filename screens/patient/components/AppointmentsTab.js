@@ -146,7 +146,9 @@ const AppointmentsTab = ({ patient, appointments, common, onUpdateAppointment })
   const appointment = appointmentId ? appointments.find((a) => a.id === appointmentId) : null
 
   return (
-    <View style={{ backgroundColor: appointments.length > 0 ? '#eee' : '#fff' }}>
+    <View
+      style={{ backgroundColor: appointments ? (appointments.length > 0 ? '#eee' : '#fff') : null }}
+    >
       <FlatList
         data={appointments}
         keyExtractor={(item) => item.id}

@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react'
+import React from 'react'
 import { Button, Icon, Text, Container, Content, View, Thumbnail } from 'native-base'
 import { ActivityIndicator, Linking } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
@@ -105,9 +105,9 @@ function LogoutScreen() {
     dispatch(authAction.logout())
   }
 
-  useEffect(()=>{
+  React.useEffect(() => {
     dispatch(commonActions.getCommon(token))
-  },[])
+  }, [])
 
   return (
     <Container>

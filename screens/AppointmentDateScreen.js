@@ -10,7 +10,7 @@ import * as commonActions from '../store/actions/common'
 import * as patientsActions from '../store/actions/patients'
 
 const AppointmentDateScreen = ({ navigation, route }) => {
-  const [refreshing, setRefreshing] = React.useState(true)
+  const patientLoading = useSelector((state) => state.patients.patientLoading)
   const [data, setData] = React.useState([])
   const token = useSelector((state) => state.auth.token)
   const [error, setError] = React.useState('')
@@ -32,37 +32,23 @@ const AppointmentDateScreen = ({ navigation, route }) => {
   }
 
   const fetchCommons = async () => {
-    try {
-      await dispatch(commonActions.getCommon(token))
-    } catch (err) {
-      setError('ERROR fetching commons: ' + err.message)
-    }
+    await dispatch(commonActions.getCommon(token))
   }
 
   const fetchPatients = async () => {
-    try {
-      await dispatch(patientsActions.getPatients(token))
-    } catch (err) {
-      setError('ERROR fetching patients: ' + err.message)
-    }
+    await dispatch(patientsActions.getPatients(token))
   }
 
   const fetchAll = async () => {
-    setRefreshing(true)
+    dispatch(patientsActions.setPatientLoading(true))
     await fetchCalendar()
     await fetchCommons()
     await fetchPatients()
-    setRefreshing(false)
+    dispatch(patientsActions.setPatientLoading(false))
   }
 
   React.useEffect(() => {
-    let cleanup = false
-    if (!cleanup) {
-      fetchAll()
-    }
-    return () => {
-      cleanup
-    }
+    fetchAll()
   }, [])
 
   if (error) {
@@ -72,7 +58,7 @@ const AppointmentDateScreen = ({ navigation, route }) => {
   return (
     <Container>
       <Content style={safe}>
-        {refreshing ? <Spinner color='blue' size='large' color='#2A86FF' /> : <CalendarV2 />}
+        {patientLoading ? <Spinner color='blue' size='large' color='#2A86FF' /> : <CalendarV2 />}
       </Content>
     </Container>
   )

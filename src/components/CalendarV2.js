@@ -36,12 +36,12 @@ const CalendarHeader = ({ date, onNextMonth, onPreviousMonth }) => {
         marginBottom: 10,
       }}
     >
-      <View style={{ flexBasis: '30%' }}>
+      <View style={{ flexBasis: '26%' }}>
         <OneMonth onPress={onPreviousMonth} disabled={isPreviousDisabled}>
           <H4 style={isPreviousDisabled ? styles.disabled : null}>{previousMonth}</H4>
         </OneMonth>
       </View>
-      <View style={{ flexBasis: '40%' }}>
+      <View style={{ flexBasis: '48%' }}>
         <CenteredView>
           <H1>{thisMonth}</H1>
         </CenteredView>
@@ -52,7 +52,7 @@ const CalendarHeader = ({ date, onNextMonth, onPreviousMonth }) => {
       <View
         style={{
           flexDirection: 'row',
-          flexBasis: '30%',
+          flexBasis: '26%',
           justifyContent: 'flex-end',
         }}
       >
@@ -241,7 +241,10 @@ const Days = ({ date }) => {
           </View>
           {showTimeSlots &&
           weekInMonthIndex === i &&
-          week.some((weekDay) => dateFns.isSameMonth(selectedDay, weekDay) && dateFns.isSameWeek(selectedDay, weekDay)) ? (
+          week.some(
+            (weekDay) =>
+              dateFns.isSameMonth(selectedDay, weekDay) && dateFns.isSameWeek(selectedDay, weekDay)
+          ) ? (
             <View>
               {isLoadingTimeSlots ? (
                 <Spinner color='blue' size='large' color='#2A86FF' />
@@ -380,10 +383,7 @@ const CenteredView = styled.View({
   justifyContent: 'center',
 })
 
-const OneMonth = styled.TouchableOpacity({
-  margin: 4,
-  padding: 8,
-})
+const OneMonth = styled.TouchableOpacity({})
 
 const RoundsHolder = styled.View({
   marginTop: 15,

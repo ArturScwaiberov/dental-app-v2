@@ -105,7 +105,7 @@ const HomeScreen = ({ navigation }) => {
       <Container style={{ alignItems: 'center' }}>
         <Text style={label}>{error}</Text>
         <Spacer value={12} />
-        <Button onPress={fetchAppointments} style={{ alignSelf: 'center' }}>
+        <Button onPress={() => fetchAppointments()} style={{ alignSelf: 'center' }}>
           <Text style={{ paddingHorizontal: 18 }}>Reload</Text>
         </Button>
       </Container>
