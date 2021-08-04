@@ -18,13 +18,13 @@ const HomeScreen = ({ navigation }) => {
   const ref = React.useRef(null)
   const [error, setError] = React.useState('')
 
-  React.useEffect(() => {
-    const backAction = () => navigation.navigate('AppointmentsCalendarTab')
+  // React.useEffect(() => {
+  //   const backAction = () => navigation.navigate('AppointmentsCalendarTab')
 
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction)
+  //   const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction)
 
-    return () => backHandler.remove()
-  }, [])
+  //   return () => backHandler.remove()
+  // }, [])
 
   useFocusEffect(
     React.useCallback(() => {
