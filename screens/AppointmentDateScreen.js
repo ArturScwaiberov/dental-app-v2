@@ -1,35 +1,37 @@
 import React from 'react'
-import { Container, Content, Spinner } from 'native-base'
-import { endOfMonth, format, startOfMonth } from 'date-fns'
+import { Container, Content,
+  //  Spinner
+   } from 'native-base'
+// import { endOfMonth, format, startOfMonth } from 'date-fns'
 import { useDispatch, useSelector } from 'react-redux'
-import { Text } from 'react-native'
+// import { Text } from 'react-native'
 
-import { patientsApi } from '../utils'
+// import { patientsApi } from '../utils'
 import CalendarV2 from '../src/components/CalendarV2'
 import * as commonActions from '../store/actions/common'
 import * as patientsActions from '../store/actions/patients'
 
 const AppointmentDateScreen = ({ navigation, route }) => {
-  const patientLoading = useSelector((state) => state.patients.patientLoading)
-  const [data, setData] = React.useState([])
+  // const patientLoading = useSelector((state) => state.patients.patientLoading)
+  // const [data, setData] = React.useState([])
   const token = useSelector((state) => state.auth.token)
-  const [error, setError] = React.useState('')
+  // const [error, setError] = React.useState('')
 
-  const date = new Date()
-  const startMonth = format(startOfMonth(date), 'yyyy-MM-dd')
-  const endMonth = format(endOfMonth(date), 'yyyy-MM-dd')
+  // const date = new Date()
+  // const startMonth = format(startOfMonth(date), 'yyyy-MM-dd')
+  // const endMonth = format(endOfMonth(date), 'yyyy-MM-dd')
   const dispatch = useDispatch()
 
-  const fetchCalendar = async () => {
-    await patientsApi
-      .getCalendar(token, startMonth, endMonth)
-      .then(({ data }) => {
-        setData(data)
-      })
-      .catch((err) => {
-        setError(err)
-      })
-  }
+  // const fetchCalendar = async () => {
+  //   await patientsApi
+  //     .getCalendar(token, startMonth, endMonth)
+  //     .then(({ data }) => {
+  //       setData(data)
+  //     })
+  //     .catch((err) => {
+  //       setError(err)
+  //     })
+  // }
 
   const fetchCommons = async () => {
     await dispatch(commonActions.getCommon(token))
@@ -41,7 +43,7 @@ const AppointmentDateScreen = ({ navigation, route }) => {
 
   const fetchAll = async () => {
     dispatch(patientsActions.setPatientLoading(true))
-    await fetchCalendar()
+    // await fetchCalendar()
     await fetchCommons()
     await fetchPatients()
     dispatch(patientsActions.setPatientLoading(false))
@@ -51,14 +53,14 @@ const AppointmentDateScreen = ({ navigation, route }) => {
     fetchAll()
   }, [])
 
-  if (error) {
-    return <Text style={label}>{error}</Text>
-  }
+  // if (error) {
+  //   return <Text style={label}>{error}</Text>
+  // }
 
   return (
     <Container>
       <Content style={safe}>
-        {patientLoading ? <Spinner color='blue' size='large' color='#2A86FF' /> : <CalendarV2 />}
+      <CalendarV2 />
       </Content>
     </Container>
   )
