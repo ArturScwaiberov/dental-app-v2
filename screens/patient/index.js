@@ -17,6 +17,7 @@ import NotesTab from './components/NotesTab'
 import PatientDetail from './components/PatientDetail'
 import PaymentForm from './components/PaymentForm'
 import Spacer from './components/Spacer'
+import { useFocusEffect } from '@react-navigation/native'
 
 const Patient = ({ route, navigation }) => {
   const { patientId } = route.params
@@ -67,15 +68,15 @@ const Patient = ({ route, navigation }) => {
     await dispatch(patientsActions.fetchInvoices(token, patientId))
   }
 
-  React.useEffect(() => {
-    ;(async () => {
-      dispatch(patientsActions.setPatientLoading(true))
-      await fetchCommons()
-      await fetchPatient()
-      await fetchInvoices()
-      dispatch(patientsActions.setPatientLoading(false))
-    })()
-  }, [])
+  useFocusEffect(React.useCallback(()=>{
+      ;(async () => {
+        dispatch(patientsActions.setPatientLoading(true))
+        await fetchCommons()
+        await fetchPatient()
+        await fetchInvoices()
+        dispatch(patientsActions.setPatientLoading(false))
+      })()
+  },[]))
 
   const renderTabBar = (props) => {
     props.tabStyle = Object.create(props.tabStyle)
