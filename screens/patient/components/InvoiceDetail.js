@@ -1,7 +1,7 @@
 import { DefaultTabBar, Tab, Tabs, Text } from 'native-base'
 import React from 'react'
 import { View } from 'react-native'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { patientsApi } from '../../../utils'
 import InvoiceSummary from './InvoiceSummary'
@@ -9,6 +9,7 @@ import ModalCloseButton from './ModalCloseButton'
 import PaymentsTab from './PaymentsTab'
 import ProceduresTab from './ProceduresTab'
 import Spacer from './Spacer'
+import * as patientsActions from '../../../store/actions/patients'
 
 const ModalView = styled.View({
   backgroundColor: '#d9e3ff',
@@ -27,9 +28,11 @@ const InvoiceDetail = ({ invoice, onClose, onUpdate }) => {
 
   const token = useSelector((state) => state.auth.token)
   const patient = useSelector((state) => state.patients.currentPatient)
+  const dispatch = useDispatch()
 
   const addPayment = async (data) => {
     await patientsApi.addInvoicePayment(token, patient.id, invoice.id, data)
+    await dispatch(patientsActions.getPatient(token, patient.id))
     await onUpdate()
     onClose()
   }
